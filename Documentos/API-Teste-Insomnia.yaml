@@ -1,0 +1,676 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: My first collection
+meta:
+  id: wrk_cc7aa8af1f5546879b97fe2e1b19b8c2
+  created: 1779191196691
+  modified: 1779191196691
+  description: ""
+collection:
+  - name: Pet
+    meta:
+      id: fld_ddb9647a53ff4a9abadb6f558afc58ba
+      created: 1779191207481
+      modified: 1779499016506
+      sortKey: -1779191227748
+      description: ""
+    children:
+      - url: https://javachallenge.onrender.com/pets
+        name: Cadastrar PET
+        meta:
+          id: req_aaa49d9da327457aa1b55a9683f79ea7
+          created: 1779495551120
+          modified: 1779510523146
+          isPrivate: false
+          description: ""
+          sortKey: -1779495559581
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "nomePet": "Luna",
+              "especie": "Gato",
+              "raca": "Siamês",
+              "dataNascimento": "2021-08-20",
+              "peso": 4.8,
+              "idResponsavel": 15
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: https://javachallenge.onrender.com/pets
+        name: Listar todos os pets
+        meta:
+          id: req_65add53e599e4ffcb34d9762bf22aa1b
+          created: 1779497285694
+          modified: 1779510540247
+          isPrivate: false
+          description: ""
+          sortKey: -1779343526958.5
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: https://javachallenge.onrender.com/pets/4
+        name: Buscar pet pelo ID
+        meta:
+          id: req_3327e83017b642e49cfdf2605b8c6708
+          created: 1779497393998
+          modified: 1779510550368
+          isPrivate: false
+          description: ""
+          sortKey: -1779267510647.25
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: https://javachallenge.onrender.com/pets?page=0&size=10&sort=nomePet,asc
+        name: Buscar pet com paginação
+        meta:
+          id: req_1d66c6c744404983ad883bc65a1b6293
+          created: 1779498489582
+          modified: 1779498497869
+          isPrivate: false
+          description: ""
+          sortKey: -1779229502491.625
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "https://javachallenge.onrender.com/pets/nome?nomePet=luna "
+        name: Buscar pet por nome
+        meta:
+          id: req_40c75675bdfa48d29821d1a4044dee75
+          created: 1779498527787
+          modified: 1779498536860
+          isPrivate: false
+          description: ""
+          sortKey: -1779210498413.8125
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "https://javachallenge.onrender.com/pets/especie?especie=gato "
+        name: Buscar pet por espécie
+        meta:
+          id: req_be45734783ff4c248f20db6b0f9fcf5b
+          created: 1779498568336
+          modified: 1779498585544
+          isPrivate: false
+          description: ""
+          sortKey: -1779200996374.9062
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: https://javachallenge.onrender.com/pets/raca?raca=siam
+        name: Buscar pet por raça
+        meta:
+          id: req_0196366c270649f2bd58ae443c4cd17f
+          created: 1779498613498
+          modified: 1779498626054
+          isPrivate: false
+          description: ""
+          sortKey: -1779196245355.4531
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: https://javachallenge.onrender.com/pets/4
+        name: Atualizar pet pelo ID
+        meta:
+          id: req_ec36f1b761d440d5ae567d0defefcc43
+          created: 1779498649216
+          modified: 1779510595178
+          isPrivate: false
+          description: ""
+          sortKey: -1779196245255.4531
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "nomePet": "Luna Atualizada",
+              "especie": "Gato",
+              "raca": "Siamês",
+              "dataNascimento": "2021-08-20",
+              "peso": 5.1,
+              "idResponsavel": 15
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: https://javachallenge.onrender.com/pets/1
+        name: Remover pet pelo ID
+        meta:
+          id: req_03ff3108d21f47189b7f679ef5062928
+          created: 1779498684573
+          modified: 1779509758968
+          isPrivate: false
+          description: ""
+          sortKey: -1779193869795.7266
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Responsável
+    meta:
+      id: fld_dd6e0b37719d4760ac2d3dca0e8fb52f
+      created: 1779191221502
+      modified: 1779499018827
+      sortKey: -1779191234094
+      description: ""
+    children:
+      - url: https://javachallenge.onrender.com/responsaveis
+        name: Cadastrar Responsável
+        meta:
+          id: req_dcf7644f9eca4944b94f1dc4f2983b97
+          created: 1779499083727
+          modified: 1779510425583
+          isPrivate: false
+          description: ""
+          sortKey: -1779499092676
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "nomeUsuario": "Maria Oliveira",
+              "email": "maria@email.com",
+              "senha": "123456",
+              "cpf": "11122233344",
+              "estado": "SP",
+              "cidade": "São Paulo",
+              "telefone": "11911112222",
+              "dataNascimento": "1998-03-15",
+              "genero": "Feminino",
+              "tipoResidencia": "Casa",
+              "telefoneSecundario": "11933334444"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: https://javachallenge.onrender.com/responsaveis
+        name: Listar Responsáveis
+        meta:
+          id: req_14be7f9aa24b4fe2bbb19dc97859a53e
+          created: 1779499151603
+          modified: 1779509650036
+          isPrivate: false
+          description: ""
+          sortKey: -1779497326128.5
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: https://javachallenge.onrender.com/responsaveis/16
+        name: Buscar Responsáveis por ID
+        meta:
+          id: req_a39aaa69b80b4a12a0c12c39647b6558
+          created: 1779499174182
+          modified: 1779510493988
+          isPrivate: false
+          description: ""
+          sortKey: -1779496442854.75
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "https://javachallenge.onrender.com/responsaveis?page=0&size=10&sort=nomeU\
+          suario,asc "
+        name: Listar Responsáveis com paginação
+        meta:
+          id: req_2fc7922331524d17a1e2bb3b8c50c6ef
+          created: 1779499207887
+          modified: 1779508990823
+          isPrivate: false
+          description: ""
+          sortKey: -1779496001217.875
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: https://javachallenge.onrender.com/responsaveis/16
+        name: Atualizar Responsáveis por ID
+        meta:
+          id: req_4fb3a8a5d3d5416b87e4cb331c4ac706
+          created: 1779499811025
+          modified: 1779510508983
+          isPrivate: false
+          description: ""
+          sortKey: -1779496001117.875
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "nomeUsuario": "Maria Oliveira Atualizada",
+              "email": "maria.atualizada@email.com",
+              "senha": "123456",
+              "cpf": "11122233344",
+              "estado": "SP",
+              "cidade": "Santos",
+              "telefone": "11911112222",
+              "dataNascimento": "1998-03-15",
+              "genero": "Feminino",
+              "tipoResidencia": "Apartamento",
+              "telefoneSecundario": "11933334444"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: https://javachallenge.onrender.com/responsaveis/15
+        name: Remover Responsáveis por ID
+        meta:
+          id: req_10ff3cda7f474e5fb6b9064d99b23fbc
+          created: 1779499825168
+          modified: 1779510736195
+          isPrivate: false
+          description: ""
+          sortKey: -1779495780349.4375
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Veterinário
+    meta:
+      id: fld_5cce18e31ecb4228bd8a561b11f272ce
+      created: 1779191233994
+      modified: 1779499063617
+      sortKey: -1779191234194
+      description: ""
+    children:
+      - url: https://javachallenge.onrender.com/veterinarios
+        name: Listar todos os Veterinários
+        meta:
+          id: req_02f2fc3f47444b589b4dc1097605927f
+          created: 1779191494236
+          modified: 1779478433545
+          isPrivate: false
+          description: ""
+          sortKey: -1779191494236
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: https://javachallenge.onrender.com/veterinarios/16
+        name: Buscar Veterinário por ID
+        meta:
+          id: req_5b25be0786514dda9f458594e71b2ce4
+          created: 1779191611597
+          modified: 1779510625333
+          isPrivate: false
+          description: ""
+          sortKey: -1779191412289.75
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: https://javachallenge.onrender.com/veterinarios/especialidade?especialidade=dermato
+        name: Buscar Veterinário por Especialidade
+        meta:
+          id: req_19ea4914365d4be4ae10153cb235cdd2
+          created: 1779191630096
+          modified: 1779510669481
+          isPrivate: false
+          description: ""
+          sortKey: -1779191371316.625
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: https://javachallenge.onrender.com/veterinarios/servico?tipoServico=cons
+        name: Buscar Veterinário por Tipo de Serviço
+        meta:
+          id: req_23f2db376bec403c8bc7da0018ee9f6b
+          created: 1779191658452
+          modified: 1779495365820
+          isPrivate: false
+          description: ""
+          sortKey: -1779191350830.0625
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: https://javachallenge.onrender.com/veterinarios
+        name: Cadastrar Veterinário
+        meta:
+          id: req_065f3d1f89db4f20bb3e8e8194af16b0
+          created: 1779191713826
+          modified: 1779510399520
+          isPrivate: false
+          description: ""
+          sortKey: -1779191494336
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "nomeUsuario": "Ana Costa",
+              "email": "ana.vet@email.com",
+              "senha": "123456",
+              "cpf": "55566677788",
+              "estado": "SP",
+              "cidade": "Campinas",
+              "telefone": "11955556666",
+              "crmv": "99887",
+              "especialidade": "Dermatologia",
+              "anosExperiencia": 7,
+              "disponibilidade": "Segunda a Sexta",
+              "tipoServico": "Consulta"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: https://javachallenge.onrender.com/veterinarios?page=0&size=10&sort=nomeUsuario,asc
+        name: Buscar Veterinário com paginação
+        meta:
+          id: req_1a38bdb4212a4ad3b53b89948c2d2f93
+          created: 1779492792967
+          modified: 1779492806870
+          isPrivate: false
+          description: ""
+          sortKey: -1779191391803.1875
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: https://javachallenge.onrender.com/veterinarios/16
+        name: Atualizar Veterinário pelo ID
+        meta:
+          id: req_b2762914e38f4b4d81e1e873ac655cb9
+          created: 1779495460639
+          modified: 1779510679542
+          isPrivate: false
+          description: ""
+          sortKey: -1779191272960.0312
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "nomeUsuario": "Ana Costa Atualizada",
+              "email": "ana.atualizada@email.com",
+              "senha": "123456",
+              "cpf": "55566677788",
+              "estado": "SP",
+              "cidade": "Campinas",
+              "telefone": "11955556666",
+              "crmv": "99887",
+              "especialidade": "Oftalmologia",
+              "anosExperiencia": 8,
+              "disponibilidade": "Segunda a Sábado",
+              "tipoServico": "Consulta e Retorno"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: https://javachallenge.onrender.com/veterinarios/16
+        name: Remover Veterinário pelo ID
+        meta:
+          id: req_8795a8c5a8c34a529be12bb00175e574
+          created: 1779495492416
+          modified: 1779510713680
+          isPrivate: false
+          description: ""
+          sortKey: -1779191234025.0156
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_9750ab76de6a55960686579195d01cf7ea501ce0
+    created: 1779191196693
+    modified: 1779191196693
+environments:
+  name: Base Environment
+  meta:
+    id: env_9750ab76de6a55960686579195d01cf7ea501ce0
+    created: 1779191196692
+    modified: 1779191196692
+    isPrivate: false
