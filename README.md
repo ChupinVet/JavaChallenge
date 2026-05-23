@@ -8,14 +8,6 @@ O projeto foi desenvolvido para o Challenge da disciplina de Java Advanced, util
 
 #  Objetivo do Projeto
 
-A aplicação tem como objetivo auxiliar no gerenciamento de informações relacionadas ao ambiente veterinário, permitindo:
-
-- Cadastro de responsáveis
-- Cadastro de veterinários
-- Cadastro de pets
-- Associação de pets aos responsáveis
-- Busca e gerenciamento de dados
-- Consultas paginadas e filtradas
 
 ---
 
@@ -47,12 +39,6 @@ A aplicação tem como objetivo auxiliar no gerenciamento de informações relac
 ---
 
 # Arquitetura do Projeto
-
-O projeto foi estruturado seguindo o padrão de arquitetura em camadas:
-
-```txt
-Controller → Service → Repository → Database
-```
 
 ## Explicando cada Camada
 
@@ -117,7 +103,6 @@ O projeto utiliza Oracle Database.
 - Busca por parâmetros  
 - Bean Validation  
 - Tratamento de exceções  
-- DTO Pattern  
 - Swagger/OpenAPI  
 - Relacionamentos JPA  
 - Herança com JOINED
@@ -158,7 +143,7 @@ mvn spring-boot:run
 ---
 # URL Base!
 ```txt
-PLACEHOLDER
+[PLACEHOLDER](https://javachallenge.onrender.com)
 ```
 ---
 #  Swagger
@@ -175,44 +160,56 @@ http://localhost:8080/swagger-ui.html
 
 # Endpoints da API
 
-## Pets
-
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/pets` | Lista todos os pets |
-| GET | `/pets/{id}` | Busca pet por ID |
-| POST | `/pets` | Cadastra um novo pet |
-| PUT | `/pets/{id}` | Atualiza um pet |
-| DELETE | `/pets/{id}` | Remove um pet |
-| GET | `/pets/nome?nomePet=Thor` | Busca pets por nome |
-| GET | `/pets/especie?especie=Cachorro` | Busca pets por espécie |
-| GET | `/pets/raca?raca=Pug` | Busca pets por raça |
-
----
 
 ## Responsáveis
 
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/responsaveis` | Lista todos os responsáveis |
-| GET | `/responsaveis/{id}` | Busca responsável por ID |
-| POST | `/responsaveis` | Cadastra um responsável |
-| PUT | `/responsaveis/{id}` | Atualiza um responsável |
-| DELETE | `/responsaveis/{id}` | Remove um responsável |
+| Método | Endpoint                                             | Descrição                       |
+|---|------------------------------------------------------|---------------------------------|
+| POST | `/responsaveis`                                      | Cadastra um novo responsável    |
+| GET | `/responsaveis`                                      | Lista todos os responsáveis     |
+| GET | `/responsaveis/{id}`                                 | Busca responsável por ID        |
+| GET | `/responsaveis?page=0&size=10&sort=nomeUsuario,asc ` | Busca responsável com paginação |
+| PUT | `/responsaveis/{id}`                                 | Atualiza um responsável         |
+| DELETE | `/responsaveis/{id}`                                 | Remove um responsável           |
+
+---
+
+## Pets
+
+| Método | Endpoint | Descrição             |
+|---|---|-----------------------|
+| POST | `/pets` | Cadastra um novo pet  |
+| GET | `/pets` | Lista todos os pets   |
+| GET | `/pets/{id}` | Busca pet por ID      |
+| GET | `/pets?page=0&size=10&sort=nomePet,asc` | Busca com paginação   |
+| GET | `/pets/nome?nomePet=Thor` | Busca pets por nome   |
+| GET | `/pets/especie?especie=Cachorro` | Busca pets por espécie |
+| GET | `/pets/raca?raca=Pug` | Busca pets por raça   |
+| PUT | `/pets/{id}` | Atualiza um pet       |
+| DELETE | `/pets/{id}` | Remove um pet         |
 
 ---
 
 ## Veterinários
 
-| Método | Endpoint | Descrição |
-|---|---|---|
-| GET | `/veterinarios` | Lista todos os veterinários |
-| GET | `/veterinarios/{id}` | Busca veterinário por ID |
-| POST | `/veterinarios` | Cadastra um veterinário |
-| PUT | `/veterinarios/{id}` | Atualiza um veterinário |
-| DELETE | `/veterinarios/{id}` | Remove um veterinário |
-| GET | `/veterinarios/especialidade?especialidade=Cardiologia` | Busca por especialidade |
-| GET | `/veterinarios/servico?tipoServico=Consulta` | Busca por tipo de serviço |
+| Método | Endpoint | Descrição                              |
+|---|---|----------------------------------------|
+| POST | `/veterinarios` | Cadastra um novo veterinário           |
+| GET | `/veterinarios` | Lista todos os veterinários            |
+| GET | `/veterinarios/{id}` | Busca veterinário por ID               |
+| GET | `/veterinarios?page=0&size=10&sort=nomeUsuario,asc` | Busca veterinário com paginação        |
+| GET | `/veterinarios/especialidade?especialidade=Cirurgia` | Busca veterinários por especialidade   |
+| GET | `/veterinarios/servico?tipoServico=Consulta` | Busca veterinários por tipo de serviço |
+| PUT | `/veterinarios/{id}` | Atualiza um veterinário                |
+| DELETE | `/veterinarios/{id}` | Remove um veterinário                  |
+
+---
+
+## Swagger
+
+| Recurso | Endpoint |
+|---|---|
+| Swagger UI | `/swagger-ui.html` |
 
 ---
 
