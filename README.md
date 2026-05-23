@@ -1,8 +1,16 @@
 #  ChupinVet API
 
-API REST desenvolvida em Java com Spring Boot para gerenciamento de pets, responsáveis e veterinários.
+A API ChupinVet atua como camada de comunicação entre o aplicativo mobile do projeto e o banco de dados Oracle, 
+permitindo que todas as informações cadastradas no sistema sejam acessadas, 
+atualizadas e gerenciadas.
 
-O projeto foi desenvolvido para o Challenge da disciplina de Java Advanced, utilizando conceitos de Programação Orientada a Objetos (POO), Spring Boot, JPA/Hibernate e Oracle Database.
+Através da API, o aplicativo mobile consegue realizar operações de cadastro, 
+consulta, atualização e remoção de dados relacionados a pets, responsáveis e veterinários, 
+garantindo integração entre o front-end mobile e a base de dados da aplicação.
+
+A utilização da API no projeto estão a 
+centralização das regras de negócio da aplicação, permitindo que todas as 
+operações e validações sejam realizadas de forma padronizada.
 
 ---
 
@@ -32,7 +40,7 @@ O projeto foi desenvolvido para o Challenge da disciplina de Java Advanced, util
 - Hibernate
 - Oracle Database
 - Maven
-- Swagger / OpenAPI
+- Swagger
 - Lombok
 - Bean Validation
 
