@@ -14,11 +14,6 @@ operações e validações sejam realizadas de forma padronizada.
 
 ---
 
-#  Objetivo do Projeto
-
-
----
-
 # Integrantes
 
 | Nome | RM | Turma |
@@ -122,7 +117,7 @@ O projeto utiliza Oracle Database.
 ## 1️ Clonar o repositório
 
 ```bash
-git clone https://github.com/seuusuario/chupinvet.git
+git clone https://github.com/ChupinVet/JavaChallenge.git
 ```
 
 ---
@@ -130,7 +125,7 @@ git clone https://github.com/seuusuario/chupinvet.git
 ## 2️ Entrar na pasta do projeto
 
 ```bash
-cd chupinvet
+cd JavaChallenge
 ```
 
 
@@ -151,7 +146,7 @@ mvn spring-boot:run
 ---
 # URL Base!
 ```txt
-[PLACEHOLDER](https://javachallenge.onrender.com)
+https://javachallenge.onrender.com
 ```
 ---
 #  Swagger
@@ -161,7 +156,7 @@ Após iniciar a aplicação:
 ## Swagger UI
 
 ```txt
-http://localhost:8080/swagger-ui.html
+https://javachallenge.onrender.com/swagger-ui.html
 ```
 
 ---
