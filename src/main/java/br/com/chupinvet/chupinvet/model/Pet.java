@@ -3,13 +3,22 @@ package br.com.chupinvet.chupinvet.model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Representa um pet.
+ *
+ * Mudanças em relação à Sprint 1:
+ * - dt_nascimento_pet (LocalDate) saiu, entrou qtd_idade_pet (Integer, idade em anos).
+ * - vl_peso agora é nullable no banco, por isso o tipo passa de double (primitivo) para Double.
+ */
 @Entity
 @Table(name = "pet")
 @Getter
@@ -24,7 +33,7 @@ import java.time.LocalDate;
 public class Pet {
 
     @Id
-    @SequenceGenerator(name = "pet_seq", sequenceName = "pet_seq", allocationSize = 1)
+    @SequenceGenerator(name = "pet_seq", sequenceName = "seq_pet", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pet_seq")
     @Column(name = "id_pet")
     @Schema(
@@ -37,46 +46,37 @@ public class Pet {
     @NotBlank
     @Size(max = 80)
     @Column(name = "nm_pet", nullable = false, length = 80)
-    @Schema(
-            description = "Nome do pet",
-            example = "Thor"
-    )
+    @Schema(description = "Nome do pet", example = "Nasus")
     private String nomePet;
 
     @NotBlank
     @Size(max = 50)
     @Column(name = "tp_especie", nullable = false, length = 50)
-    @Schema(
-            description = "Espécie do pet",
-            example = "Cachorro"
-    )
+    @Schema(description = "Espécie do pet", example = "Cachorro")
     private String especie;
 
     @Size(max = 50)
     @Column(name = "nm_raca", length = 50)
-    @Schema(
-            description = "Raça do pet",
-            example = "Golden Retriever"
-    )
+    @Schema(description = "Raça do pet", example = "Golden Retriever")
     private String raca;
 
-    @Column(name = "dt_nascimento_pet")
-    @Schema(
-            description = "Data de nascimento do pet",
-            example = "2022-01-10"
-    )
-    private LocalDate dataNascimento;
+    @PositiveOrZero
+    @Column(name = "qtd_idade_pet")
+    @Schema(description = "Idade do pet em anos", example = "6")
+    private Integer idade;
 
     @Positive
     @Column(name = "vl_peso")
-    @Schema(
-            description = "Peso do pet",
-            example = "25.5"
-    )
-    private double peso;
+    @Schema(description = "Peso atual do pet (kg)", example = "30.5")
+    private Double peso;
 
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "Responsavel_id_responsavel", nullable = false)
     @Schema(hidden = true)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_responsavel", nullable = false)
     private Responsavel responsavel;
+
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @Schema(hidden = true)
+    private List<Diario> diarios = new ArrayList<>();
 }
