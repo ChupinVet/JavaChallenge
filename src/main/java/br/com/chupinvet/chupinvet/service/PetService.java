@@ -24,84 +24,91 @@ public class PetService {
 
     @Transactional
     public PetResponseDTO cadastrar(PetRequestDTO dto) {
-
-        Responsavel responsavel = responsavelRepository.findById(dto.idResponsavel())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Responsável não encontrado"));
+        Responsavel responsavel = buscarResponsavelOuFalhar(dto.idResponsavel());
 
         Pet pet = new Pet();
         pet.setNomePet(dto.nomePet());
         pet.setEspecie(dto.especie());
         pet.setRaca(dto.raca());
-        pet.setDataNascimento(dto.dataNascimento());
+        pet.setIdade(dto.idade());
         pet.setPeso(dto.peso());
         pet.setResponsavel(responsavel);
 
         Pet petSalvo = petRepository.save(pet);
-
         return toResponseDTO(petSalvo);
     }
+
     @Transactional(readOnly = true)
     public Page<PetResponseDTO> listar(Pageable pageable) {
         return petRepository.findAll(pageable)
                 .map(this::toResponseDTO);
     }
+
     @Transactional(readOnly = true)
     public PetResponseDTO buscarPorId(Long id) {
-        Pet pet = petRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Pet não encontrado"));
-
-        return toResponseDTO(pet);
+        return toResponseDTO(buscarOuFalhar(id));
     }
+
     @Transactional(readOnly = true)
     public Page<PetResponseDTO> buscarPorNome(String nomePet, Pageable pageable) {
         return petRepository.findByNomePetContainingIgnoreCase(nomePet, pageable)
                 .map(this::toResponseDTO);
     }
+
     @Transactional(readOnly = true)
     public Page<PetResponseDTO> buscarPorEspecie(String especie, Pageable pageable) {
         return petRepository.findByEspecieContainingIgnoreCase(especie, pageable)
                 .map(this::toResponseDTO);
     }
+
     @Transactional(readOnly = true)
     public Page<PetResponseDTO> buscarPorRaca(String raca, Pageable pageable) {
         return petRepository.findByRacaContainingIgnoreCase(raca, pageable)
                 .map(this::toResponseDTO);
     }
 
-    private PetResponseDTO toResponseDTO(Pet pet) {
-        return new PetResponseDTO(
-                pet.getIdPet(),
-                pet.getNomePet(),
-                pet.getEspecie(),
-                pet.getRaca(),
-                pet.getDataNascimento(),
-                pet.getPeso(),
-                pet.getResponsavel().getIdUsuario(),
-                pet.getResponsavel().getNomeUsuario()
-        );
-    }
     @Transactional
     public PetResponseDTO atualizar(Long id, PetRequestDTO dto) {
+        Pet pet = buscarOuFalhar(id);
+        Responsavel responsavel = buscarResponsavelOuFalhar(dto.idResponsavel());
 
-        Pet pet = petRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Pet não encontrado"));
-
-        Responsavel responsavel = responsavelRepository.findById(dto.idResponsavel())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Responsável não encontrado"));
         pet.setNomePet(dto.nomePet());
         pet.setEspecie(dto.especie());
         pet.setRaca(dto.raca());
-        pet.setDataNascimento(dto.dataNascimento());
+        pet.setIdade(dto.idade());
         pet.setPeso(dto.peso());
         pet.setResponsavel(responsavel);
 
         Pet petAtualizado = petRepository.save(pet);
         return toResponseDTO(petAtualizado);
     }
+
     @Transactional
     public void deletar(Long id) {
-        Pet pet = petRepository.findById(id)
+        petRepository.delete(buscarOuFalhar(id));
+    }
+
+    private Pet buscarOuFalhar(Long id) {
+        return petRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Pet não encontrado"));
-        petRepository.delete(pet);
+    }
+
+    private Responsavel buscarResponsavelOuFalhar(Long idResponsavel) {
+        return responsavelRepository.findById(idResponsavel)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Responsável não encontrado"));
+    }
+
+    private PetResponseDTO toResponseDTO(Pet pet) {
+        Responsavel responsavel = pet.getResponsavel();
+        return new PetResponseDTO(
+                pet.getIdPet(),
+                pet.getNomePet(),
+                pet.getEspecie(),
+                pet.getRaca(),
+                pet.getIdade(),
+                pet.getPeso(),
+                responsavel.getIdResponsavel(),
+                responsavel.getUsuario().getNomeUsuario()
+        );
     }
 }

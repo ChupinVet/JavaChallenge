@@ -1,12 +1,18 @@
 package br.com.chupinvet.chupinvet.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
+/**
+ * Reúne os campos de Usuario (identidade) e de Responsavel (dados
+ * específicos) num único request, já que o cadastro cria as duas
+ * entidades numa transação só.
+ */
 @Schema(description = "Dados para cadastro ou atualização de responsável")
 public record ResponsavelRequestDTO(
 
@@ -15,14 +21,15 @@ public record ResponsavelRequestDTO(
         @Size(max = 100)
         String nomeUsuario,
 
-        @Schema(description = "E-mail do responsável", example = "joao@email.com")
+        @Schema(description = "E-mail do responsável, usado como login", example = "joao@email.com")
         @NotBlank
+        @Email
         @Size(max = 150)
         String email,
 
-        @Schema(description = "Senha de acesso", example = "123456")
+        @Schema(description = "Senha de acesso (será armazenada com hash)", example = "senhaForte123")
         @NotBlank
-        @Size(max = 100)
+        @Size(min = 6, max = 100)
         String senha,
 
         @Schema(description = "CPF com 11 dígitos", example = "12345678901")
@@ -31,12 +38,10 @@ public record ResponsavelRequestDTO(
         String cpf,
 
         @Schema(description = "Estado onde mora", example = "SP")
-        @NotBlank
         @Size(max = 50)
         String estado,
 
         @Schema(description = "Cidade onde mora", example = "São Paulo")
-        @NotBlank
         @Size(max = 80)
         String cidade,
 

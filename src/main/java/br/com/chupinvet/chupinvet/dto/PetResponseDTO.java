@@ -2,16 +2,13 @@ package br.com.chupinvet.chupinvet.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-
 @Schema(description = "Dados retornados de um pet")
 public record PetResponseDTO(
 
         @Schema(example = "1")
         Long idPet,
 
-        @Schema(example = "Thor")
+        @Schema(example = "Nasus")
         String nomePet,
 
         @Schema(example = "Cachorro")
@@ -20,11 +17,11 @@ public record PetResponseDTO(
         @Schema(example = "Golden Retriever")
         String raca,
 
-        @Schema(example = "2022-01-10")
-        LocalDate dataNascimento,
+        @Schema(example = "6")
+        Integer idade,
 
-        @Schema(example = "25.5")
-        double peso,
+        @Schema(example = "30.5")
+        Double peso,
 
         @Schema(example = "1")
         Long idResponsavel,

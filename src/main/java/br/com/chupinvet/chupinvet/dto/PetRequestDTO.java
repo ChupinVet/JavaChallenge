@@ -4,15 +4,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Schema(description = "Dados para cadastro ou atualização de pet")
 public record PetRequestDTO(
 
-        @Schema(description = "Nome do pet", example = "Thor")
+        @Schema(description = "Nome do pet", example = "Nasus")
         @NotBlank
         @Size(max = 80)
         String nomePet,
@@ -26,14 +24,15 @@ public record PetRequestDTO(
         @Size(max = 50)
         String raca,
 
-        @Schema(description = "Data de nascimento", example = "2022-01-10")
-        LocalDate dataNascimento,
+        @Schema(description = "Idade do pet em anos", example = "6")
+        @PositiveOrZero
+        Integer idade,
 
-        @Schema(description = "Peso do pet", example = "25.5")
+        @Schema(description = "Peso do pet (kg)", example = "30.5")
         @Positive
-        double peso,
+        Double peso,
 
-        @Schema(description = "ID do responsável", example = "1")
+        @Schema(description = "ID do responsável (id_responsavel, não o id_usuario)", example = "1")
         @NotNull
         Long idResponsavel
 
