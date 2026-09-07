@@ -8,6 +8,8 @@ import br.com.chupinvet.chupinvet.model.Responsavel;
 import br.com.chupinvet.chupinvet.model.Usuario;
 import br.com.chupinvet.chupinvet.repository.ResponsavelRepository;
 import br.com.chupinvet.chupinvet.repository.UsuarioRepository;
+import br.com.chupinvet.chupinvet.security.SecurityUtils;
+import br.com.chupinvet.chupinvet.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -67,11 +69,18 @@ public class ResponsavelService {
     @Transactional(readOnly = true)
     public ResponsavelResponseDTO buscarPorId(Long id) {
         Responsavel responsavel = buscarOuFalhar(id);
+        // Veterinário pode ver qualquer responsável; o próprio Responsável
+        // só pode ver a si mesmo.
+        UserDetailsImpl usuarioLogado = SecurityUtils.getUsuarioLogado();
+        if (usuarioLogado.isResponsavel()) {
+            SecurityUtils.validarPosseResponsavel(id);
+        }
         return toResponseDTO(responsavel);
     }
 
     @Transactional
     public ResponsavelResponseDTO atualizar(Long id, ResponsavelRequestDTO dto) {
+        SecurityUtils.validarPosseResponsavel(id);
         Responsavel responsavel = buscarOuFalhar(id);
         validarDuplicidade(dto.email(), dto.cpf(), responsavel.getUsuario().getIdUsuario());
 
@@ -95,6 +104,7 @@ public class ResponsavelService {
 
     @Transactional
     public void deletar(Long id) {
+        SecurityUtils.validarPosseResponsavel(id);
         Responsavel responsavel = buscarOuFalhar(id);
         Usuario usuario = responsavel.getUsuario();
         // Deleta o filho antes do pai por causa da FK (Responsavel referencia Usuario)

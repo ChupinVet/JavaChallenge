@@ -7,16 +7,20 @@ COPY .mvn .mvn
 COPY pom.xml .
 COPY src src
 
-RUN chmod +x ./mvnw
+RUN chmod -R 777 ./mvnw
 
-RUN ./mvnw clean package -DskipTests
+RUN ./mvnw install -DskipTests
+
+RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
 FROM eclipse-temurin:21-jdk
 
-WORKDIR /app
+VOLUME /tmp
 
-COPY --from=build /workspace/app/target/*.jar app.jar
+ARG DEPENDENCY=/workspace/app/target/dependency
 
-EXPOSE 8080
+COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
+COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
+COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
 
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java","-cp","app:app/lib/*","br.com.chupinvet.chupinvet.ChupinvetApplication"]

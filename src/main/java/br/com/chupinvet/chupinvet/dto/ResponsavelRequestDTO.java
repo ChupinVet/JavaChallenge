@@ -8,11 +8,6 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
-/**
- * Reúne os campos de Usuario (identidade) e de Responsavel (dados
- * específicos) num único request, já que o cadastro cria as duas
- * entidades numa transação só.
- */
 @Schema(description = "Dados para cadastro ou atualização de responsável")
 public record ResponsavelRequestDTO(
 

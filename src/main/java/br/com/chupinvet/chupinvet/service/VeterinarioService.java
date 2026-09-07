@@ -8,6 +8,7 @@ import br.com.chupinvet.chupinvet.model.Usuario;
 import br.com.chupinvet.chupinvet.model.Veterinario;
 import br.com.chupinvet.chupinvet.repository.UsuarioRepository;
 import br.com.chupinvet.chupinvet.repository.VeterinarioRepository;
+import br.com.chupinvet.chupinvet.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -80,6 +81,7 @@ public class VeterinarioService {
 
     @Transactional
     public VeterinarioResponseDTO atualizar(Long id, VeterinarioRequestDTO dto) {
+        SecurityUtils.validarPosseVeterinario(id);
         Veterinario veterinario = buscarOuFalhar(id);
         validarDuplicidade(dto.email(), dto.cpf(), veterinario.getUsuario().getIdUsuario());
 
@@ -106,6 +108,7 @@ public class VeterinarioService {
 
     @Transactional
     public void deletar(Long id) {
+        SecurityUtils.validarPosseVeterinario(id);
         Veterinario veterinario = buscarOuFalhar(id);
         Usuario usuario = veterinario.getUsuario();
         veterinarioRepository.delete(veterinario);

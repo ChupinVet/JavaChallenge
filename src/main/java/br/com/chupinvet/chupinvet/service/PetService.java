@@ -7,6 +7,7 @@ import br.com.chupinvet.chupinvet.model.Pet;
 import br.com.chupinvet.chupinvet.model.Responsavel;
 import br.com.chupinvet.chupinvet.repository.PetRepository;
 import br.com.chupinvet.chupinvet.repository.ResponsavelRepository;
+import br.com.chupinvet.chupinvet.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +25,10 @@ public class PetService {
 
     @Transactional
     public PetResponseDTO cadastrar(PetRequestDTO dto) {
-        Responsavel responsavel = buscarResponsavelOuFalhar(dto.idResponsavel());
+        // O dono do pet é sempre o Responsável autenticado — nunca um
+        // valor vindo do corpo da requisição.
+        Long idResponsavelLogado = SecurityUtils.getUsuarioLogado().getIdResponsavel();
+        Responsavel responsavel = buscarResponsavelOuFalhar(idResponsavelLogado);
 
         Pet pet = new Pet();
         pet.setNomePet(dto.nomePet());
@@ -70,14 +74,15 @@ public class PetService {
     @Transactional
     public PetResponseDTO atualizar(Long id, PetRequestDTO dto) {
         Pet pet = buscarOuFalhar(id);
-        Responsavel responsavel = buscarResponsavelOuFalhar(dto.idResponsavel());
+        // O responsável do pet não muda numa atualização — só o dono
+        // atual pode editar, e a posse não é transferível por aqui.
+        SecurityUtils.validarPosseResponsavel(pet.getResponsavel().getIdResponsavel());
 
         pet.setNomePet(dto.nomePet());
         pet.setEspecie(dto.especie());
         pet.setRaca(dto.raca());
         pet.setIdade(dto.idade());
         pet.setPeso(dto.peso());
-        pet.setResponsavel(responsavel);
 
         Pet petAtualizado = petRepository.save(pet);
         return toResponseDTO(petAtualizado);
@@ -85,7 +90,9 @@ public class PetService {
 
     @Transactional
     public void deletar(Long id) {
-        petRepository.delete(buscarOuFalhar(id));
+        Pet pet = buscarOuFalhar(id);
+        SecurityUtils.validarPosseResponsavel(pet.getResponsavel().getIdResponsavel());
+        petRepository.delete(pet);
     }
 
     private Pet buscarOuFalhar(Long id) {

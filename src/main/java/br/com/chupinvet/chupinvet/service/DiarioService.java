@@ -7,6 +7,8 @@ import br.com.chupinvet.chupinvet.model.Diario;
 import br.com.chupinvet.chupinvet.model.Pet;
 import br.com.chupinvet.chupinvet.repository.DiarioRepository;
 import br.com.chupinvet.chupinvet.repository.PetRepository;
+import br.com.chupinvet.chupinvet.security.SecurityUtils;
+import br.com.chupinvet.chupinvet.security.UserDetailsImpl;
 import br.com.chupinvet.chupinvet.service.insight.InsightProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,6 +31,8 @@ public class DiarioService {
     @Transactional
     public DiarioResponseDTO cadastrar(DiarioRequestDTO dto) {
         Pet pet = buscarPetOuFalhar(dto.idPet());
+        // Só o Responsável dono do pet pode registrar um diário para ele.
+        SecurityUtils.validarPosseResponsavel(pet.getResponsavel().getIdResponsavel());
 
         Diario diarioAnterior = diarioRepository
                 .findTopByPet_IdPetOrderByDataRegistroDesc(pet.getIdPet())
@@ -56,22 +60,35 @@ public class DiarioService {
 
     @Transactional(readOnly = true)
     public Page<DiarioResponseDTO> listarPorPet(Long idPet, Pageable pageable) {
-        buscarPetOuFalhar(idPet);
+        Pet pet = buscarPetOuFalhar(idPet);
+        // Veterinário pode ver o diário de qualquer pet; o Responsável só
+        // pode ver o diário dos próprios pets.
+        UserDetailsImpl usuarioLogado = SecurityUtils.getUsuarioLogado();
+        if (usuarioLogado.isResponsavel()) {
+            SecurityUtils.validarPosseResponsavel(pet.getResponsavel().getIdResponsavel());
+        }
         return diarioRepository.findByPet_IdPetOrderByDataRegistroDesc(idPet, pageable)
                 .map(this::toResponseDTO);
     }
 
     @Transactional(readOnly = true)
     public DiarioResponseDTO buscarPorId(Long id) {
-        return toResponseDTO(buscarOuFalhar(id));
+        Diario diario = buscarOuFalhar(id);
+        UserDetailsImpl usuarioLogado = SecurityUtils.getUsuarioLogado();
+        if (usuarioLogado.isResponsavel()) {
+            SecurityUtils.validarPosseResponsavel(diario.getPet().getResponsavel().getIdResponsavel());
+        }
+        return toResponseDTO(diario);
     }
 
     @Transactional
     public DiarioResponseDTO atualizar(Long id, DiarioRequestDTO dto) {
         Diario diario = buscarOuFalhar(id);
-        Pet pet = buscarPetOuFalhar(dto.idPet());
+        // O pet de um registro de diário não muda numa atualização — só o
+        // dono atual pode editar (dto.idPet() é ignorado aqui de propósito,
+        // igual foi feito no Pet/Responsavel).
+        SecurityUtils.validarPosseResponsavel(diario.getPet().getResponsavel().getIdResponsavel());
 
-        diario.setPet(pet);
         diario.setDataRegistro(dto.dataRegistro());
         diario.setHumor(dto.humor());
         diario.setAlimentacao(dto.alimentacao());
@@ -88,7 +105,9 @@ public class DiarioService {
 
     @Transactional
     public void deletar(Long id) {
-        diarioRepository.delete(buscarOuFalhar(id));
+        Diario diario = buscarOuFalhar(id);
+        SecurityUtils.validarPosseResponsavel(diario.getPet().getResponsavel().getIdResponsavel());
+        diarioRepository.delete(diario);
     }
 
     private Diario buscarOuFalhar(Long id) {

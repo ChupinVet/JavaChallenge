@@ -4,11 +4,7 @@ import br.com.chupinvet.chupinvet.model.Diario;
 import org.springframework.stereotype.Service;
 
 /**
- * Implementação provisória: não gera nenhum insight. Fica registrada como
- * @Service para que o Spring já injete algo no DiarioService hoje; quando
- * a API de IA externa for integrada, basta criar outra implementação de
- * InsightProvider (ex.: IaApiInsightProvider) e marcar esta como
- * @Primary=false ou removê-la.
+ * Implementação provisória: não gera nenhum insight.
  */
 @Service
 public class NoOpInsightProvider implements InsightProvider {

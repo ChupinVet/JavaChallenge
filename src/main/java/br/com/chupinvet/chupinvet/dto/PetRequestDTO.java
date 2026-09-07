@@ -2,7 +2,6 @@ package br.com.chupinvet.chupinvet.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
@@ -30,11 +29,7 @@ public record PetRequestDTO(
 
         @Schema(description = "Peso do pet (kg)", example = "30.5")
         @Positive
-        Double peso,
-
-        @Schema(description = "ID do responsável (id_responsavel, não o id_usuario)", example = "1")
-        @NotNull
-        Long idResponsavel
+        Double peso
 
 ) {
 }
