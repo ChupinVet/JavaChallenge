@@ -1,6 +1,7 @@
 package br.com.chupinvet.chupinvet.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.math.BigDecimal;
 
 @Schema(description = "Dados retornados de um pet")
 public record PetResponseDTO(
@@ -21,7 +22,7 @@ public record PetResponseDTO(
         Integer idade,
 
         @Schema(example = "30.5")
-        Double peso,
+        BigDecimal peso,
 
         @Schema(example = "1")
         Long idResponsavel,

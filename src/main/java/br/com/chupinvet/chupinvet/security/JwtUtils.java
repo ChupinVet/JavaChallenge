@@ -1,6 +1,5 @@
 package br.com.chupinvet.chupinvet.security;
 
-import br.com.chupinvet.chupinvet.service.UserDetailsImpl;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -14,9 +13,8 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-/**
- * Reescrito com a API atual do jjwt
- */
+// Reescrito com a API atual do jjwt
+
 @Component
 public class JwtUtils {
 
@@ -33,7 +31,7 @@ public class JwtUtils {
     }
 
     public String generateJwtToken(Authentication authentication) {
-        br.com.chupinvet.chupinvet.service.UserDetailsImpl principal = (UserDetailsImpl) authentication.getPrincipal();
+        UserDetailsImpl principal = (UserDetailsImpl) authentication.getPrincipal();
 
         return Jwts.builder()
                 .subject(principal.getUsername())

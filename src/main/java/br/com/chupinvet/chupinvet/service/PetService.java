@@ -8,6 +8,7 @@ import br.com.chupinvet.chupinvet.model.Responsavel;
 import br.com.chupinvet.chupinvet.repository.PetRepository;
 import br.com.chupinvet.chupinvet.repository.ResponsavelRepository;
 import br.com.chupinvet.chupinvet.security.SecurityUtils;
+import br.com.chupinvet.chupinvet.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,31 +43,63 @@ public class PetService {
         return toResponseDTO(petSalvo);
     }
 
+    /**
+     * Responsável só lista os próprios pets; Veterinário continua vendo
+     * todos (pode precisar consultar qualquer pet no atendimento).
+     */
     @Transactional(readOnly = true)
     public Page<PetResponseDTO> listar(Pageable pageable) {
+        UserDetailsImpl usuarioLogado = SecurityUtils.getUsuarioLogado();
+        if (usuarioLogado.isResponsavel()) {
+            return petRepository.findByResponsavel_IdResponsavel(usuarioLogado.getIdResponsavel(), pageable)
+                    .map(this::toResponseDTO);
+        }
         return petRepository.findAll(pageable)
                 .map(this::toResponseDTO);
     }
 
     @Transactional(readOnly = true)
     public PetResponseDTO buscarPorId(Long id) {
-        return toResponseDTO(buscarOuFalhar(id));
+        Pet pet = buscarOuFalhar(id);
+        UserDetailsImpl usuarioLogado = SecurityUtils.getUsuarioLogado();
+        if (usuarioLogado.isResponsavel()) {
+            SecurityUtils.validarPosseResponsavel(pet.getResponsavel().getIdResponsavel());
+        }
+        return toResponseDTO(pet);
     }
 
     @Transactional(readOnly = true)
     public Page<PetResponseDTO> buscarPorNome(String nomePet, Pageable pageable) {
+        UserDetailsImpl usuarioLogado = SecurityUtils.getUsuarioLogado();
+        if (usuarioLogado.isResponsavel()) {
+            return petRepository.findByResponsavel_IdResponsavelAndNomePetContainingIgnoreCase(
+                            usuarioLogado.getIdResponsavel(), nomePet, pageable)
+                    .map(this::toResponseDTO);
+        }
         return petRepository.findByNomePetContainingIgnoreCase(nomePet, pageable)
                 .map(this::toResponseDTO);
     }
 
     @Transactional(readOnly = true)
     public Page<PetResponseDTO> buscarPorEspecie(String especie, Pageable pageable) {
+        UserDetailsImpl usuarioLogado = SecurityUtils.getUsuarioLogado();
+        if (usuarioLogado.isResponsavel()) {
+            return petRepository.findByResponsavel_IdResponsavelAndEspecieContainingIgnoreCase(
+                            usuarioLogado.getIdResponsavel(), especie, pageable)
+                    .map(this::toResponseDTO);
+        }
         return petRepository.findByEspecieContainingIgnoreCase(especie, pageable)
                 .map(this::toResponseDTO);
     }
 
     @Transactional(readOnly = true)
     public Page<PetResponseDTO> buscarPorRaca(String raca, Pageable pageable) {
+        UserDetailsImpl usuarioLogado = SecurityUtils.getUsuarioLogado();
+        if (usuarioLogado.isResponsavel()) {
+            return petRepository.findByResponsavel_IdResponsavelAndRacaContainingIgnoreCase(
+                            usuarioLogado.getIdResponsavel(), raca, pageable)
+                    .map(this::toResponseDTO);
+        }
         return petRepository.findByRacaContainingIgnoreCase(raca, pageable)
                 .map(this::toResponseDTO);
     }

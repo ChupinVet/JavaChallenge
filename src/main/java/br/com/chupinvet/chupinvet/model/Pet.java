@@ -9,16 +9,11 @@ import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Representa um pet.
- *
- * Mudanças em relação à Sprint 1:
- * - dt_nascimento_pet (LocalDate) saiu, entrou qtd_idade_pet (Integer, idade em anos).
- * - vl_peso agora é nullable no banco, por isso o tipo passa de double (primitivo) para Double.
- */
+
 @Entity
 @Table(name = "pet")
 @Getter
@@ -66,9 +61,9 @@ public class Pet {
     private Integer idade;
 
     @Positive
-    @Column(name = "vl_peso")
+    @Column(name = "vl_peso", precision = 5, scale = 2)
     @Schema(description = "Peso atual do pet (kg)", example = "30.5")
-    private Double peso;
+    private BigDecimal peso;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

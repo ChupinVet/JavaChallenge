@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 
 @Schema(description = "Dados para cadastro ou atualização de um registro de diário")
 public record DiarioRequestDTO(
@@ -44,7 +45,7 @@ public record DiarioRequestDTO(
 
         @Schema(description = "Peso do pet no momento do registro (kg)", example = "28.5")
         @Positive
-        Double pesoRegistrado,
+        BigDecimal pesoRegistrado,
 
         @Schema(description = "ID do pet", example = "1")
         @NotNull

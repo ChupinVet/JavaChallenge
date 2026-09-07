@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
+import java.math.BigDecimal;
+
 
 @Schema(description = "Dados para cadastro ou atualização de pet")
 public record PetRequestDTO(
@@ -29,7 +31,7 @@ public record PetRequestDTO(
 
         @Schema(description = "Peso do pet (kg)", example = "30.5")
         @Positive
-        Double peso
+        BigDecimal peso
 
 ) {
 }

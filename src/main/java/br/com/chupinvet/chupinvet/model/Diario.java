@@ -8,17 +8,10 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
-/**
- * Entidade nova desta sprint. Representa um registro de diário de um pet,
- * feito pelo responsável (humor, alimentação, água, comportamento,
- * sintomas, peso do dia).
- *
- * O campo ds_insight_ia NÃO é preenchido pelo cliente: é calculado pela
- * camada de serviço (ex.: comparação de peso com o registro anterior) e
- * é um dos dois fluxos funcionais não-CRUD exigidos pela sprint.
- */
+
 @Entity
 @Table(name = "diario")
 @Getter
@@ -82,14 +75,14 @@ public class Diario {
     private String observacoes;
 
     @Positive
-    @Column(name = "vl_peso_registrado")
+    @Column(name = "vl_peso_registrado", precision = 5, scale = 2)
     @Schema(description = "Peso do pet no momento do registro (kg)", example = "28.5")
-    private Double pesoRegistrado;
+    private BigDecimal pesoRegistrado;
 
     @Size(max = 500)
     @Column(name = "ds_insight_ia", length = 500)
     @Schema(
-            description = "Insight gerado automaticamente",
+            description = "Insight gerado automaticamente pela regra de negócio (ex.: alerta de variação de peso)",
             accessMode = Schema.AccessMode.READ_ONLY
     )
     private String insightIA;

@@ -3,6 +3,7 @@ package br.com.chupinvet.chupinvet.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 
 @Schema(description = "Dados retornados de um registro de diário")
 public record DiarioResponseDTO(
@@ -29,7 +30,7 @@ public record DiarioResponseDTO(
         String observacoes,
 
         @Schema(example = "28.5")
-        Double pesoRegistrado,
+        BigDecimal pesoRegistrado,
 
         @Schema(description = "Insight gerado por IA (preenchido em sprint futura, pode vir nulo)")
         String insightIA,
