@@ -17,12 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * IMPORTANTE: PasswordEncoder é um bean que será declarado na camada de
- * Security (WebSecurityConfig, próxima etapa). Até lá, o contexto Spring
- * não sobe sozinho com esta classe — é esperado, faz parte da ordem de
- * construção combinada.
- */
+
 @Service
 public class ResponsavelService {
 
@@ -69,8 +64,7 @@ public class ResponsavelService {
     @Transactional(readOnly = true)
     public ResponsavelResponseDTO buscarPorId(Long id) {
         Responsavel responsavel = buscarOuFalhar(id);
-        // Veterinário pode ver qualquer responsável; o próprio Responsável
-        // só pode ver a si mesmo.
+
         UserDetailsImpl usuarioLogado = SecurityUtils.getUsuarioLogado();
         if (usuarioLogado.isResponsavel()) {
             SecurityUtils.validarPosseResponsavel(id);
@@ -117,13 +111,9 @@ public class ResponsavelService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Responsável não encontrado"));
     }
 
-    /**
-     * @param idUsuarioAtual null no cadastro; no update, é o ID do próprio
-     *                       usuário sendo atualizado (para não conflitar
-     *                       consigo mesmo).
-     */
+
     private void validarDuplicidade(String email, String cpf, Long idUsuarioAtual) {
-        usuarioRepository.findByEmail(email).ifPresent(usuarioExistente -> {
+        usuarioRepository.findByEmailIgnoreCase(email).ifPresent(usuarioExistente -> {
             if (!usuarioExistente.getIdUsuario().equals(idUsuarioAtual)) {
                 throw new DadoDuplicadoException("E-mail já cadastrado");
             }

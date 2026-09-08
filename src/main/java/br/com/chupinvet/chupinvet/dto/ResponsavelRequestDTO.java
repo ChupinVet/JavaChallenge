@@ -3,10 +3,10 @@ package br.com.chupinvet.chupinvet.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
+
 
 @Schema(description = "Dados para cadastro ou atualização de responsável")
 public record ResponsavelRequestDTO(
@@ -46,16 +46,13 @@ public record ResponsavelRequestDTO(
         String telefone,
 
         @Schema(description = "Data de nascimento", example = "2000-05-10")
-        @NotNull
         LocalDate dataNascimento,
 
         @Schema(description = "Gênero do responsável", example = "Masculino")
-        @NotBlank
         @Size(max = 20)
         String genero,
 
         @Schema(description = "Tipo de residência", example = "Casa")
-        @NotBlank
         @Size(max = 20)
         String tipoResidencia,
 

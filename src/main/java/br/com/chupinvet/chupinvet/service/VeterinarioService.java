@@ -121,7 +121,7 @@ public class VeterinarioService {
     }
 
     private void validarDuplicidade(String email, String cpf, Long idUsuarioAtual) {
-        usuarioRepository.findByEmail(email).ifPresent(usuarioExistente -> {
+        usuarioRepository.findByEmailIgnoreCase(email).ifPresent(usuarioExistente -> {
             if (!usuarioExistente.getIdUsuario().equals(idUsuarioAtual)) {
                 throw new DadoDuplicadoException("E-mail já cadastrado");
             }

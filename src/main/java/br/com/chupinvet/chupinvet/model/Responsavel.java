@@ -2,7 +2,6 @@ package br.com.chupinvet.chupinvet.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -38,18 +37,15 @@ public class Responsavel {
     )
     private Long idResponsavel;
 
-    @NotNull
     @Column(name = "dt_nascimento")
     @Schema(description = "Data de nascimento do responsável", example = "2000-05-10")
     private LocalDate dataNascimento;
 
-    @NotBlank
     @Size(max = 20)
     @Column(name = "tp_genero", length = 20)
     @Schema(description = "Gênero do responsável", example = "Masculino")
     private String genero;
 
-    @NotBlank
     @Size(max = 20)
     @Column(name = "tp_residencia", length = 20)
     @Schema(description = "Tipo de residência", example = "Casa")
