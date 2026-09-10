@@ -110,12 +110,10 @@ O projeto utiliza **Oracle Database**. O schema é compartilhado com uma API .NE
 ## Relacionamentos
 
 - `Responsavel` e `Veterinario` **não** herdam de `Usuario`, 
-cada um tem sua própria chave primária e se associa a um `Usuario` por uma relação `@OneToOne` (composição), 
-- refletindo o modelo físico do banco.
+cada um tem sua própria chave primária e se associa a um `Usuario` por uma relação `@OneToOne` (composição), refletindo o modelo físico do banco.
 - Um `Responsavel` possui vários `Pet` (1:N).
 - Um `Pet` possui vários `Diario` (1:N).
-- Um `Usuario` é um `Responsavel` **ou** um `Veterinario`, o papel é derivado dinamicamente (não existe uma coluna "tipo" no banco), 
-- verificando em qual tabela existe um registro associado.
+- Um `Usuario` é um `Responsavel` **ou** um `Veterinario`, o papel é derivado dinamicamente (não existe uma coluna "tipo" no banco), verificando em qual tabela existe um registro associado.
 
 ---
 
@@ -135,13 +133,13 @@ já cria a conta de login.
 
 | Papel | Pode fazer |
 |---|---|
-| `ROLE_RESPONSAVEL` | CRUD dos próprios pets e diários; ver/editar o próprio cadastro |
-| `ROLE_VETERINARIO` | Listar/ver todos os pets e responsáveis (leitura), CRUD do próprio cadastro de veterinário |
+| `ROLE_RESPONSAVEL` | CRUD dos próprios pets e diários; CRUD do próprio cadastro |
+| `ROLE_VETERINARIO` | Listar todos os pets e responsáveis (leitura), CRUD do próprio cadastro de veterinário |
 
 Além da checagem por papel, existe checagem de **posse**: 
 um Responsável não consegue ver, editar ou deletar pets, 
 diários ou o cadastro de **outro** Responsável, 
-mesmo tendo um token válido tentativas assim retornam `403`.
+mesmo tendo um token válido, tentativas assim retornam `403`.
 
 ## Rotas públicas (não exigem token)
 
