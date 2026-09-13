@@ -1,0 +1,1587 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: ChupinVet API
+meta:
+  id: wrk_a8acb3e8277c44cd871d0b716811b30b
+  created: 1789329499032
+  modified: 1789329499032
+  description: ""
+collection:
+  - name: ChupinVet API
+    meta:
+      id: fld_4ee6cdf5a5dc4188bc6145b8938f4293
+      created: 1788983202279
+      modified: 1789332748119
+      sortKey: -1788983186093
+      description: "Colecao de testes da API ChupinVet (Sprint 2). Rode as pastas em
+        ordem: 01 a 07. As variaveis de token/ids sao preenchidas
+        automaticamente pelos scripts de teste de cada requisicao, entao a ordem
+        importa."
+    children:
+      - name: 01 - Signup
+        meta:
+          id: fld_5ce8543f52d9412baeebf8295d9b460b
+          created: 1788983202281
+          modified: 1789332687688
+          sortKey: -1788983186092
+          description: ""
+        children:
+          - url: "{{baseUrl}}/responsaveis"
+            name: Cadastrar Responsavel A (sucesso)
+            meta:
+              id: req_2497ad6b2b0541b7abf444a329dbe807
+              created: 1788983202282
+              modified: 1789316655360
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186091
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "nomeUsuario": "Ana Beatriz Costa",
+                  "email": "{{_['emailResponsavelA']}}",
+                  "senha": "{{_['senha']}}",
+                  "cpf": "11122233392",
+                  "estado": "SP",
+                  "cidade": "Sao Paulo",
+                  "telefone": "11987654321",
+                  "dataNascimento": "1995-03-22",
+                  "genero": "Feminino",
+                  "tipoResidencia": "Apartamento",
+                  "telefoneSecundario": "11912345678"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: >-
+                insomnia.test('Status 201', () =>
+                insomnia.response.to.have.status(201));
+
+                const jsonData = insomnia.response.json();
+
+                insomnia.collectionVariables.set('idResponsavelA',
+                jsonData.idResponsavel);
+
+                insomnia.test('idResponsavel presente', () =>
+                insomnia.expect(jsonData.idResponsavel).to.not.be.undefined);
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/veterinarios"
+            name: Cadastrar Veterinario (sucesso)
+            meta:
+              id: req_77b4041693de4ce4a8c333fed6274275
+              created: 1788983202283
+              modified: 1788983522437
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186089
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "nomeUsuario": "Carla Mendes Souza",
+                  "email": "{{_['emailVeterinario']}}",
+                  "senha": "{{_['senha']}}",
+                  "cpf": "33344423566",
+                  "estado": "SP",
+                  "cidade": "Campinas",
+                  "telefone": "19987654321",
+                  "crmv": "SP12345",
+                  "especialidade": "Clinica Geral",
+                  "anosExperiencia": 8,
+                  "disponibilidade": "Segunda a Sexta, 8h-18h",
+                  "tipoServico": "Consulta",
+                  "nomeClinica": "Clinica Pet Amigo",
+                  "bio": "Veterinaria generalista com foco em caes e gatos."
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: >-
+                insomnia.test('Status 201', () =>
+                insomnia.response.to.have.status(201));
+
+                const jsonData = insomnia.response.json();
+
+                insomnia.collectionVariables.set('idVeterinario',
+                jsonData.idVeterinario);
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/responsaveis"
+            name: Cadastrar Responsavel B (sucesso, para testes de posse)
+            meta:
+              id: req_db73b98a7b24426b81261336cc00be32
+              created: 1788983202283
+              modified: 1788983506843
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186090
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "nomeUsuario": "Bruno Ferreira Lima",
+                  "email": "{{_['emailResponsavelB']}}",
+                  "senha": "{{_['senha']}}",
+                  "cpf": "22233344755",
+                  "estado": "RJ",
+                  "cidade": "Rio de Janeiro",
+                  "telefone": "21987654321",
+                  "dataNascimento": "1990-07-10",
+                  "genero": "Masculino",
+                  "tipoResidencia": "Casa",
+                  "telefoneSecundario": null
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: >-
+                insomnia.test('Status 201', () =>
+                insomnia.response.to.have.status(201));
+
+                const jsonData = insomnia.response.json();
+
+                insomnia.collectionVariables.set('idResponsavelB',
+                jsonData.idResponsavel);
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/responsaveis"
+            name: Cadastrar Responsavel sem nomeUsuario (espera 400)
+            meta:
+              id: req_20a9cbbdce6f4079864ae37a7f3c34e5
+              created: 1788983202284
+              modified: 1788983202284
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186087
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "email": "campo.faltando@teste.com",
+                  "senha": "{{senha}}",
+                  "cpf": "55566677788",
+                  "telefone": "11911112222"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: >-
+                insomnia.test('Status 400', () =>
+                insomnia.response.to.have.status(400));
+
+                const jsonData = insomnia.response.json();
+
+                insomnia.test('Erro aponta o campo nomeUsuario', () =>
+                insomnia.expect(jsonData).to.have.property('nomeUsuario'));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/responsaveis"
+            name: Cadastrar Responsavel com e-mail duplicado (espera 409)
+            meta:
+              id: req_6bd95fc0a0a54ee5bc3b0665fd0b0213
+              created: 1788983202284
+              modified: 1788983202284
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186088
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "nomeUsuario": "Ana Duplicada",
+                  "email": "{{emailResponsavelA}}",
+                  "senha": "{{senha}}",
+                  "cpf": "99988877766",
+                  "telefone": "11999998888"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: >-
+                insomnia.test('Status 409', () =>
+                insomnia.response.to.have.status(409));
+
+                insomnia.test('Mensagem menciona email', () =>
+                insomnia.expect(insomnia.response.text()).to.include('mail'));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: 02 - Login
+        meta:
+          id: fld_bd14c817408945449d07cc20b8f35b29
+          created: 1788983202285
+          modified: 1789332696789
+          sortKey: -1788983186086
+          description: ""
+        children:
+          - url: "{{baseUrl}}/auth/login"
+            name: Login Responsavel A (sucesso)
+            meta:
+              id: req_2edbbf33cdb74386b9265cea39e1ae0f
+              created: 1788983202285
+              modified: 1788983202285
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186085
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "email": "{{emailResponsavelA}}",
+                  "senha": "{{senha}}"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: >-
+                insomnia.test('Status 200', () =>
+                insomnia.response.to.have.status(200));
+
+                const jsonData = insomnia.response.json();
+
+                insomnia.collectionVariables.set('tokenResponsavelA',
+                jsonData.token);
+
+                insomnia.test('Role e ROLE_RESPONSAVEL', () =>
+                insomnia.expect(jsonData.role).to.eql('ROLE_RESPONSAVEL'));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/auth/login"
+            name: Login Responsavel B (sucesso)
+            meta:
+              id: req_dd081784915d45c7b67ebeddd56a141e
+              created: 1788983202285
+              modified: 1788983202285
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186084
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "email": "{{emailResponsavelB}}",
+                  "senha": "{{senha}}"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: >-
+                insomnia.test('Status 200', () =>
+                insomnia.response.to.have.status(200));
+
+                const jsonData = insomnia.response.json();
+
+                insomnia.collectionVariables.set('tokenResponsavelB',
+                jsonData.token);
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/auth/login"
+            name: Login com senha errada (espera 401)
+            meta:
+              id: req_10ca79c9c3b7454987e2ad564e0c18a1
+              created: 1788983202286
+              modified: 1788983202286
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186082
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "email": "{{emailResponsavelA}}",
+                  "senha": "senhaErrada999"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: insomnia.test('Status 401', () =>
+                insomnia.response.to.have.status(401));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/auth/login"
+            name: Login Veterinario (sucesso)
+            meta:
+              id: req_b1161282f57b43aa807375c128e88b58
+              created: 1788983202286
+              modified: 1788983202286
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186083
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "email": "{{emailVeterinario}}",
+                  "senha": "{{senha}}"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: >-
+                insomnia.test('Status 200', () =>
+                insomnia.response.to.have.status(200));
+
+                const jsonData = insomnia.response.json();
+
+                insomnia.collectionVariables.set('tokenVeterinario',
+                jsonData.token);
+
+                insomnia.test('Role e ROLE_VETERINARIO', () =>
+                insomnia.expect(jsonData.role).to.eql('ROLE_VETERINARIO'));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/auth/login"
+            name: Login com e-mail inexistente (espera 401)
+            meta:
+              id: req_279bb23abca5419db9ec71b376828409
+              created: 1788983202287
+              modified: 1788983202287
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186081
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "email": "nao.existe@teste.com",
+                  "senha": "qualquer123"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: insomnia.test('Status 401', () =>
+                insomnia.response.to.have.status(401));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: 03 - Pets
+        meta:
+          id: fld_9200333849ff42fe8a0a5314bb8af42c
+          created: 1788983202287
+          modified: 1789332712296
+          sortKey: -1788983186080
+          description: ""
+        children:
+          - url: "{{baseUrl}}/pets"
+            name: Cadastrar Pet (Responsavel A)
+            meta:
+              id: req_415344d3194e44c3aad6c0d7c4f559ce
+              created: 1788983202287
+              modified: 1788983202287
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186079
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "nomePet": "Nasus",
+                  "especie": "Cachorro",
+                  "raca": "Golden Retriever",
+                  "idade": 6,
+                  "peso": 30.5
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelA}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelA}}"
+              prefix: ""
+            scripts:
+              afterResponse: |-
+                insomnia.test('Status 201', () => insomnia.response.to.have.status(201));
+                const jsonData = insomnia.response.json();
+                insomnia.collectionVariables.set('idPet', jsonData.idPet);
+                insomnia.test('idResponsavel bate com o dono logado', () => insomnia.expect(jsonData.idResponsavel).to.eql(parseInt(insomnia.collectionVariables.get('idResponsavelA'))));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/pets"
+            name: Tentar cadastrar Pet como Veterinario (espera 403)
+            meta:
+              id: req_5ce4a2933808443d8e83366f6fdd8b0d
+              created: 1788983202288
+              modified: 1788983202288
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186078
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "nomePet": "Intruso",
+                  "especie": "Gato",
+                  "idade": 1,
+                  "peso": 3.2
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenVeterinario}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenVeterinario}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 403', () =>
+                insomnia.response.to.have.status(403));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/pets"
+            name: Listar Pets (Responsavel A - deve ver so os proprios)
+            meta:
+              id: req_aad9d57e904547c4b0cd8219184014d7
+              created: 1788983202288
+              modified: 1788983202288
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186077
+            method: GET
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelA}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelA}}"
+              prefix: ""
+            scripts:
+              afterResponse: >-
+                insomnia.test('Status 200', () =>
+                insomnia.response.to.have.status(200));
+
+                const jsonData = insomnia.response.json();
+
+                insomnia.test('Todos os pets pertencem ao Responsavel A', () =>
+                {
+                  jsonData.content.forEach(p => insomnia.expect(p.idResponsavel).to.eql(parseInt(insomnia.collectionVariables.get('idResponsavelA'))));
+                });
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/pets/{{idPet}}"
+            name: Buscar Pet por Id (dono, sucesso)
+            meta:
+              id: req_bd7205bcc14843d19f8e636915135349
+              created: 1788983202289
+              modified: 1788983202289
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186075
+            method: GET
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelA}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelA}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 200', () =>
+                insomnia.response.to.have.status(200));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/pets"
+            name: Listar Pets (Veterinario - deve ver todos)
+            meta:
+              id: req_c37d6b4eeaad4ebb9b0d1d299236b3b2
+              created: 1788983202289
+              modified: 1788983202289
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186076
+            method: GET
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenVeterinario}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenVeterinario}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 200', () =>
+                insomnia.response.to.have.status(200));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/pets/{{idPet}}"
+            name: Buscar Pet por Id (outro Responsavel, espera 403)
+            meta:
+              id: req_d46b45f615b347b19dda309de7e32779
+              created: 1788983202289
+              modified: 1788983202289
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186074
+            method: GET
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelB}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelB}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 403', () =>
+                insomnia.response.to.have.status(403));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/pets/{{idPet}}"
+            name: Atualizar Pet (dono, sucesso)
+            meta:
+              id: req_7dad04858f134db6bf837dbaa68c0209
+              created: 1788983202290
+              modified: 1788983202290
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186073
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "nomePet": "Nasus",
+                  "especie": "Cachorro",
+                  "raca": "Golden Retriever",
+                  "idade": 7,
+                  "peso": 31.0
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelA}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelA}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 200', () =>
+                insomnia.response.to.have.status(200));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/pets/{{idPet}}"
+            name: Tentar deletar Pet como outro Responsavel (espera 403)
+            meta:
+              id: req_9d8e1dda747c4c0f8b2213e1643cb07d
+              created: 1788983202290
+              modified: 1788983202290
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186072
+            method: DELETE
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelB}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelB}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 403', () =>
+                insomnia.response.to.have.status(403));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/pets/999999"
+            name: Buscar Pet inexistente (espera 404)
+            meta:
+              id: req_f17201977c46496ea5fde5a11d4a613d
+              created: 1788983202291
+              modified: 1788983202291
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186071
+            method: GET
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelA}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelA}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 404', () =>
+                insomnia.response.to.have.status(404));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: 04 - Diario
+        meta:
+          id: fld_48f4d4fe32a24fbb9f153040ca41f6d4
+          created: 1788983202291
+          modified: 1789332721031
+          sortKey: -1788983186070
+          description: ""
+        children:
+          - url: "{{baseUrl}}/diarios"
+            name: Cadastrar Diario (dono do pet)
+            meta:
+              id: req_4f69f7d094e84e3685b4aa2f23da7fc1
+              created: 1788983202291
+              modified: 1788983202291
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186069
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "dataRegistro": "2026-09-07",
+                  "humor": "Feliz",
+                  "alimentacao": "Normal",
+                  "consumoAgua": "Bebeu bem",
+                  "comportamento": "Brincalhao, sem sinais de dor",
+                  "observacoes": "Passeou 30 minutos no parque",
+                  "pesoRegistrado": 30.2,
+                  "idPet": "{{_['idPet']}}"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelA}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelA}}"
+              prefix: ""
+            scripts:
+              afterResponse: >-
+                insomnia.test('Status 201', () =>
+                insomnia.response.to.have.status(201));
+
+                const jsonData = insomnia.response.json();
+
+                insomnia.collectionVariables.set('idDiario', jsonData.idDiario);
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/diarios/pet/{{idPet}}"
+            name: Listar Diario do Pet (dono, sucesso)
+            meta:
+              id: req_ed23240b63934efc9652626f2619c17c
+              created: 1788983202291
+              modified: 1788983202291
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186068
+            method: GET
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelA}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelA}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 200', () =>
+                insomnia.response.to.have.status(200));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/diarios/{{idDiario}}"
+            name: Buscar Diario por Id (sucesso)
+            meta:
+              id: req_173fede64a66499db1733b9dc034ed02
+              created: 1788983202292
+              modified: 1788983202292
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186066
+            method: GET
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelA}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelA}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 200', () =>
+                insomnia.response.to.have.status(200));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/diarios/pet/{{idPet}}"
+            name: Listar Diario do Pet (outro Responsavel, espera 403)
+            meta:
+              id: req_1a6acbc00e654327ad06f91bb697a599
+              created: 1788983202292
+              modified: 1788983202292
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186067
+            method: GET
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelB}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelB}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 403', () =>
+                insomnia.response.to.have.status(403));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/diarios/{{idDiario}}"
+            name: Atualizar Diario (dono, sucesso)
+            meta:
+              id: req_dbddd723c52d4517a0fc7d7c90034d5d
+              created: 1788983202292
+              modified: 1788983202292
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186065
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "dataRegistro": "2026-09-07",
+                  "humor": "Calmo",
+                  "alimentacao": "Normal",
+                  "consumoAgua": "Bebeu pouco",
+                  "observacoes": "Ajustado apos consulta",
+                  "pesoRegistrado": 30.0,
+                  "idPet": "{{_['idPet']}}"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelA}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelA}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 200', () =>
+                insomnia.response.to.have.status(200));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/diarios/{{idDiario}}"
+            name: Tentar deletar Diario como outro Responsavel (espera 403)
+            meta:
+              id: req_e36fe2a623d0401fbfded0b5ee9ec04f
+              created: 1788983202293
+              modified: 1788983202293
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186064
+            method: DELETE
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelB}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelB}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 403', () =>
+                insomnia.response.to.have.status(403));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: 05 - Veterinarios
+        meta:
+          id: fld_334000274c734fbcbd5f8a3199440f7b
+          created: 1788983202293
+          modified: 1789332729923
+          sortKey: -1788983186063
+          description: ""
+        children:
+          - url: "{{baseUrl}}/veterinarios"
+            name: Cadastrar Veterinario com CPF duplicado (espera 409)
+            meta:
+              id: req_359f2b328d9b4bb59425f7fa4b21a1d0
+              created: 1788983202293
+              modified: 1789330078506
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186062
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "nomeUsuario": "Outro Vet",
+                  "email": "outro32.vet@teste.com",
+                  "senha": "{{senha}}",
+                  "cpf": "33344423566",
+                  "telefone": "11900001111",
+                  "crmv": "SP99999",
+                  "especialidade": "Dermatologia"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            scripts:
+              afterResponse: insomnia.test('Status 409', () =>
+                insomnia.response.to.have.status(409));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/veterinarios"
+            name: Listar Veterinarios (autenticado)
+            meta:
+              id: req_ba20f6c47c264ac6bcaa3555dee58c9e
+              created: 1788983202293
+              modified: 1788983202293
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186061
+            method: GET
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelA}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelA}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 200', () =>
+                insomnia.response.to.have.status(200));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/veterinarios/{{idVeterinario}}"
+            name: Atualizar Veterinario (dono, sucesso)
+            meta:
+              id: req_a4785157cb7948d9af8584221ceebe2f
+              created: 1788983202294
+              modified: 1788997179784
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186059
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "nomeUsuario": "Carla Mendes Souza",
+                  "email": "{{emailVeterinario}}",
+                  "senha": "{{senha}}",
+                  "cpf": "33344423566",
+                  "estado": "SP",
+                  "cidade": "Campinas",
+                  "telefone": "19987654321",
+                  "crmv": "SP12345",
+                  "especialidade": "Clinica Geral e Dermatologia",
+                  "anosExperiencia": 9,
+                  "disponibilidade": "Segunda a Sabado",
+                  "tipoServico": "Consulta",
+                  "nomeClinica": "Clinica Pet Amigo",
+                  "bio": "Atualizado via Postman"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenVeterinario}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenVeterinario}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 200', () =>
+                insomnia.response.to.have.status(200));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/veterinarios/999999"
+            name: Buscar Veterinario inexistente (espera 404)
+            meta:
+              id: req_c1d3bfe8cc834ddda07e9e43918b6384
+              created: 1788983202294
+              modified: 1788983202294
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186058
+            method: GET
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelA}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelA}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 404', () =>
+                insomnia.response.to.have.status(404));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/veterinarios/especialidade"
+            name: Buscar Veterinarios por especialidade
+            meta:
+              id: req_d1ca5d14fbac49df8678905f4c84afa0
+              created: 1788983202294
+              modified: 1788983202294
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186060
+            method: GET
+            parameters:
+              - name: especialidade
+                value: Geral
+                disabled: false
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelA}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelA}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 200', () =>
+                insomnia.response.to.have.status(200));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: 06 - Responsaveis
+        meta:
+          id: fld_e00547bbdd9740d1813077375c9476f9
+          created: 1788983202294
+          modified: 1789332739137
+          sortKey: -1788983186057
+          description: ""
+        children:
+          - url: "{{baseUrl}}/responsaveis"
+            name: Listar Responsaveis (Veterinario, sucesso)
+            meta:
+              id: req_3f22fbc2a44a42b1bd8075eaa38b103e
+              created: 1788983202295
+              modified: 1788983202295
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186056
+            method: GET
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenVeterinario}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenVeterinario}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 200', () =>
+                insomnia.response.to.have.status(200));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/responsaveis/{{idResponsavelA}}"
+            name: Buscar Responsavel por Id (proprio, sucesso)
+            meta:
+              id: req_5a6e937ebfca4b6e8734cdf9a6dcfded
+              created: 1788983202295
+              modified: 1788983202295
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186054
+            method: GET
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelA}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelA}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 200', () =>
+                insomnia.response.to.have.status(200));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/responsaveis"
+            name: Tentar listar Responsaveis como Responsavel (espera 403)
+            meta:
+              id: req_e0b239790fdb4f2798974186f6c32a6e
+              created: 1788983202295
+              modified: 1788983202295
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186055
+            method: GET
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelA}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelA}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 403', () =>
+                insomnia.response.to.have.status(403));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/responsaveis/{{idResponsavelA}}"
+            name: Buscar Responsavel por Id (outro Responsavel, espera 403)
+            meta:
+              id: req_30fb7b21fb0d49ab94a0ea30df6c2164
+              created: 1788983202296
+              modified: 1788983202296
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186053
+            method: GET
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelB}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelB}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 403', () =>
+                insomnia.response.to.have.status(403));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/responsaveis/{{idResponsavelB}}"
+            name: Tentar atualizar Responsavel de outro id (espera 403)
+            meta:
+              id: req_74749db10b8746a68362b1c1765dd18c
+              created: 1788983202297
+              modified: 1788983202297
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186051
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "nomeUsuario": "Invasao",
+                  "email": "{{emailResponsavelB}}",
+                  "senha": "{{senha}}",
+                  "cpf": "22233344455",
+                  "telefone": "21987654321"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelA}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelA}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 403', () =>
+                insomnia.response.to.have.status(403));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/responsaveis/{{idResponsavelA}}"
+            name: Atualizar Responsavel (proprio, sucesso)
+            meta:
+              id: req_d5b3faa51f994f02b44349079fbbe28d
+              created: 1788983202297
+              modified: 1788997303883
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186052
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "nomeUsuario": "Ana Beatriz Costa Silva",
+                  "email": "{{_['emailResponsavelA']}}",
+                  "senha": "{{_['senha']}}",
+                  "cpf": "11122233392",
+                  "estado": "SP",
+                  "cidade": "Sao Paulo",
+                  "telefone": "11987654321",
+                  "dataNascimento": "1995-03-22",
+                  "genero": "Feminino",
+                  "tipoResidencia": "Apartamento"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelA}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelA}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 200', () =>
+                insomnia.response.to.have.status(200));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: 07 - Limpeza (opcional, roda por ultimo)
+        meta:
+          id: fld_4d2bc018f98045eb94522323f67baaf2
+          created: 1788983202297
+          modified: 1789332748119
+          sortKey: -1788983186050
+          description: ""
+        children:
+          - url: "{{baseUrl}}/diarios/{{idDiario}}"
+            name: Deletar Diario (dono, sucesso)
+            meta:
+              id: req_3cde28566336493a9e9931ea0bcf8b99
+              created: 1788983202297
+              modified: 1788983202297
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186049
+            method: DELETE
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelA}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelA}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 204', () =>
+                insomnia.response.to.have.status(204));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/responsaveis/{{idResponsavelA}}"
+            name: Deletar Responsavel A
+            meta:
+              id: req_8b9ec5a267f944b7bfe27c866b27a3d7
+              created: 1788983202298
+              modified: 1788983202298
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186047
+            method: DELETE
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelA}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelA}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 204', () =>
+                insomnia.response.to.have.status(204));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/responsaveis/{{idResponsavelB}}"
+            name: Deletar Responsavel B
+            meta:
+              id: req_8f7c6294055a44fcb7cfca98f44a5459
+              created: 1788983202298
+              modified: 1788983202298
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186046
+            method: DELETE
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelB}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelB}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 204', () =>
+                insomnia.response.to.have.status(204));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/pets/{{idPet}}"
+            name: Deletar Pet (dono, sucesso)
+            meta:
+              id: req_e123e304f5b24b51b20770a1739750c8
+              created: 1788983202298
+              modified: 1788983202298
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186048
+            method: DELETE
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenResponsavelA}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenResponsavelA}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 204', () =>
+                insomnia.response.to.have.status(204));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{baseUrl}}/veterinarios/{{idVeterinario}}"
+            name: Deletar Veterinario
+            meta:
+              id: req_5fd0db64fc1c414486ef9a90fa27c309
+              created: 1788983202299
+              modified: 1788983202299
+              isPrivate: false
+              description: ""
+              sortKey: -1788983186045
+            method: DELETE
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Authorization
+                value: Bearer {{tokenVeterinario}}
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{tokenVeterinario}}"
+              prefix: ""
+            scripts:
+              afterResponse: insomnia.test('Status 204', () =>
+                insomnia.response.to.have.status(204));
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_cc7e33a2374e4b03998b736e222fce01
+    created: 1788983202339
+    modified: 1789332748115
+environments:
+  name: Variables
+  meta:
+    id: env_68d39a7217924d4d8ea02210ac889033
+    created: 1788983202299
+    modified: 1789332748115
+    isPrivate: false
+  data:
+    baseUrl: https://javachallenge.onrender.com
+    senha: senha123
+    emailResponsavelA: ana.postman@teste.com
+    emailResponsavelB: bruno.postman@teste.com
+    emailVeterinario: carla.postman@teste.com
+    tokenResponsavelA: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmEucG9zdG1hbkB0ZXN0ZS5jb20iLCJpYXQiOjE3ODkzMzI2OTAsImV4cCI6MTc4OTkzNzQ5MH0.6f3ly7PajrUJC-qJlaBjYZMvyW4ehz0ScQSRbHHm2EI
+    tokenResponsavelB: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJicnVuby5wb3N0bWFuQHRlc3RlLmNvbSIsImlhdCI6MTc4OTMzMjY5MiwiZXhwIjoxNzg5OTM3NDkyfQ.99YZSofBqOrJa5_uEK_KdjSDp-H6Bn8K8YGk7NqSkv0
+    tokenVeterinario: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjYXJsYS5wb3N0bWFuQHRlc3RlLmNvbSIsImlhdCI6MTc4OTMzMjY5MywiZXhwIjoxNzg5OTM3NDkzfQ.QqZ-R0Xk2IyGndb1isDMooQz48_QQpjnPPSTTKawuCM
+    idResponsavelA: 24
+    idResponsavelB: 25
+    idVeterinario: 16
+    idPet: 23
+    idDiario: 23
