@@ -41,6 +41,17 @@ independente de qual cliente está consumindo a API.
 
 ---
 
+# Frontend
+
+A camada de visualização é um aplicativo **mobile em React Native + Expo**, desenvolvido em repositório separado, que consome esta API via REST, usando o mesmo fluxo de autenticação JWT documentado abaixo.
+
+O app cobre as duas experiências de usuário da plataforma:
+- **Responsável**: cadastro, login, gerenciamento dos próprios pets e registros de diário.
+- **Veterinário**: cadastro, login, consulta de pets e responsáveis cadastrados.
+
+A demonstração das telas e do funcionamento do app está no vídeo de entrega, junto com a demonstração da API.
+
+---
 # Arquitetura do Projeto
 
 ## Explicando cada camada
@@ -126,7 +137,7 @@ já cria a conta de login.
 ## Fluxo básico
 
 1. `POST /responsaveis` **ou** `POST /veterinarios`, cadastro (rota pública)
-2. `POST /auth/login` — envia e-mail e senha, recebe um token JWT
+2. `POST /auth/login`  envia e-mail e senha, recebe um token JWT
 3. Envia o token em todas as demais requisições: header `Authorization: Bearer <tokenJwt>`
 
 ## Papéis e permissões
@@ -150,6 +161,26 @@ mesmo tendo um token válido, tentativas assim retornam `403`.
 
 Todas as demais rotas exigem token válido.
 
+---
+
+# Fluxos Funcionais Completos (além de CRUD)
+
+Requisito da sprint: pelo menos dois fluxos completos do sistema, além de simples operações de CRUD.
+
+### 1. Autenticação e emissão de identidade (signup → login → JWT → papel)
+
+Não é uma operação isolada de CRUD, envolve múltiplas etapas e componentes trabalhando juntos:
+1. Cadastro (`POST /responsaveis` ou `POST /veterinarios`) cria o `Usuario` e o registro específico (Responsável ou Veterinário) numa única transação.
+2. Login (`POST /auth/login`) valida a senha (hash BCrypt) e emite um token JWT.
+3. O papel do usuário (`ROLE_RESPONSAVEL`/`ROLE_VETERINARIO`) é **derivado dinamicamente** em tempo de execução, não existe uma coluna "tipo" no banco, o sistema verifica em qual tabela (Responsável ou Veterinário) existe um registro associado ao `Usuario` que fez login.
+4. Esse papel é então usado por todo o resto da aplicação para liberar ou bloquear rotas (`@PreAuthorize`).
+
+### 2. Controle de acesso por posse (autorização que atravessa todos os recursos)
+
+Não é uma tela ou endpoint único, é uma regra de negócio (`SecurityUtils`) aplicada a Pets, Diários e ao próprio cadastro:
+1. Um Responsável autenticado só consegue ver, editar ou remover **os próprios** pets, diários e dados de cadastro, mesmo com um token JWT válido, tentar acessar o recurso de outro Responsável retorna `403`.
+2. O dono de um novo Pet/Diário nunca é informado pelo cliente, é sempre derivado do token de quem está autenticado, impedindo que alguém crie um recurso "em nome" de outro usuário.
+3. Já o Veterinário tem visão mais ampla (lê pets e responsáveis de qualquer um), refletindo o papel dele na operação da clínica.
 ---
 
 # Funcionalidades Implementadas
@@ -344,7 +375,7 @@ está disponível em `chupinvet.postman_collection.json`, na raiz do repositóri
 # Próximos Passos
 
 - **Flyway**: fora de escopo nesta sprint, por decisão do professor. O schema é criado e mantido manualmente (`Estrutura_e_Carga.sql`), compartilhado com a API .NET do projeto.
-- **Insight de IA no Diário**: o campo `insightIA` existe no modelo, mas não é preenchido nesta sprint — será gerado por uma API de IA externa, a ser integrada futuramente.
+- **Insight de IA no Diário**: o campo `insightIA` existe no modelo, mas não é preenchido nesta sprint, será gerado por uma API de IA externa, a ser integrada futuramente.
 
 ---
 
@@ -356,6 +387,6 @@ A documentação completa e interativa está disponível via Swagger UI.
 
 # Disciplina
 
-Java Advanced | Sprints 1, 2 e 3
+Java Advanced 
 
 FIAP
