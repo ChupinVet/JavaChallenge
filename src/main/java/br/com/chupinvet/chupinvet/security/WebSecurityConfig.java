@@ -2,7 +2,6 @@ package br.com.chupinvet.chupinvet.security;
 
 import br.com.chupinvet.chupinvet.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

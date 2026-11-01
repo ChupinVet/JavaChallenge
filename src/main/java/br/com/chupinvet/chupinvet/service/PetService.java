@@ -15,10 +15,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 @Service
 @RequiredArgsConstructor
 public class PetService {
-
 
     private final PetRepository petRepository;
 
@@ -26,81 +28,55 @@ public class PetService {
 
     @Transactional
     public PetResponseDTO cadastrar(PetRequestDTO dto) {
-        // O dono do pet é sempre o Responsável autenticado nunca um valor vindo do corpo da requisição.
+        // O dono do pet é sempre o Responsável autenticado — nunca um
+        // valor vindo do corpo da requisição.
         Long idResponsavelLogado = SecurityUtils.getUsuarioLogado().getIdResponsavel();
         Responsavel responsavel = buscarResponsavelOuFalhar(idResponsavelLogado);
 
         Pet pet = new Pet();
-        pet.setNomePet(dto.nomePet());
-        pet.setEspecie(dto.especie());
-        pet.setRaca(dto.raca());
-        pet.setIdade(dto.idade());
-        pet.setPeso(dto.peso());
         pet.setResponsavel(responsavel);
+        aplicarDados(pet, dto);
 
         Pet petSalvo = petRepository.save(pet);
         return toResponseDTO(petSalvo);
     }
 
-    /**
-     * Responsável só lista os próprios pets; Veterinário continua vendo
-     * todos (pode precisar consultar qualquer pet no atendimento).
-     */
     @Transactional(readOnly = true)
     public Page<PetResponseDTO> listar(Pageable pageable) {
-        UserDetailsImpl usuarioLogado = SecurityUtils.getUsuarioLogado();
-        if (usuarioLogado.isResponsavel()) {
-            return petRepository.findByResponsavel_IdResponsavel(usuarioLogado.getIdResponsavel(), pageable)
-                    .map(this::toResponseDTO);
-        }
-        return petRepository.findAll(pageable)
-                .map(this::toResponseDTO);
+        return buscarConformePapel(
+                idResponsavel -> petRepository.findByResponsavel_IdResponsavel(idResponsavel, pageable),
+                () -> petRepository.findAll(pageable));
     }
 
     @Transactional(readOnly = true)
     public PetResponseDTO buscarPorId(Long id) {
         Pet pet = buscarOuFalhar(id);
-        UserDetailsImpl usuarioLogado = SecurityUtils.getUsuarioLogado();
-        if (usuarioLogado.isResponsavel()) {
-            SecurityUtils.validarPosseResponsavel(pet.getResponsavel().getIdResponsavel());
-        }
+        SecurityUtils.validarAcessoLeitura(pet.getResponsavel().getIdResponsavel());
         return toResponseDTO(pet);
     }
 
     @Transactional(readOnly = true)
     public Page<PetResponseDTO> buscarPorNome(String nomePet, Pageable pageable) {
-        UserDetailsImpl usuarioLogado = SecurityUtils.getUsuarioLogado();
-        if (usuarioLogado.isResponsavel()) {
-            return petRepository.findByResponsavel_IdResponsavelAndNomePetContainingIgnoreCase(
-                            usuarioLogado.getIdResponsavel(), nomePet, pageable)
-                    .map(this::toResponseDTO);
-        }
-        return petRepository.findByNomePetContainingIgnoreCase(nomePet, pageable)
-                .map(this::toResponseDTO);
+        return buscarConformePapel(
+                idResponsavel -> petRepository.findByResponsavel_IdResponsavelAndNomePetContainingIgnoreCase(
+                        idResponsavel, nomePet, pageable),
+                () -> petRepository.findByNomePetContainingIgnoreCase(nomePet, pageable));
     }
 
     @Transactional(readOnly = true)
     public Page<PetResponseDTO> buscarPorEspecie(String especie, Pageable pageable) {
-        UserDetailsImpl usuarioLogado = SecurityUtils.getUsuarioLogado();
-        if (usuarioLogado.isResponsavel()) {
-            return petRepository.findByResponsavel_IdResponsavelAndEspecieContainingIgnoreCase(
-                            usuarioLogado.getIdResponsavel(), especie, pageable)
-                    .map(this::toResponseDTO);
-        }
-        return petRepository.findByEspecieContainingIgnoreCase(especie, pageable)
-                .map(this::toResponseDTO);
+        return buscarConformePapel(
+                idResponsavel -> petRepository.findByResponsavel_IdResponsavelAndEspecieContainingIgnoreCase(
+                        idResponsavel, especie, pageable),
+                () -> petRepository.findByEspecieContainingIgnoreCase(especie, pageable));
     }
 
     @Transactional(readOnly = true)
     public Page<PetResponseDTO> buscarPorRaca(String raca, Pageable pageable) {
-        UserDetailsImpl usuarioLogado = SecurityUtils.getUsuarioLogado();
-        if (usuarioLogado.isResponsavel()) {
-            return petRepository.findByResponsavel_IdResponsavelAndRacaContainingIgnoreCase(
-                            usuarioLogado.getIdResponsavel(), raca, pageable)
-                    .map(this::toResponseDTO);
-        }
-        return petRepository.findByRacaContainingIgnoreCase(raca, pageable)
-                .map(this::toResponseDTO);
+        return buscarConformePapel(
+                idResponsavel -> petRepository.findByResponsavel_IdResponsavelAndRacaContainingIgnoreCase(
+                        idResponsavel, raca, pageable),
+                () -> petRepository.findByRacaContainingIgnoreCase(raca, pageable));
     }
 
     @Transactional
@@ -110,11 +86,7 @@ public class PetService {
         // atual pode editar, e a posse não é transferível por aqui.
         SecurityUtils.validarPosseResponsavel(pet.getResponsavel().getIdResponsavel());
 
-        pet.setNomePet(dto.nomePet());
-        pet.setEspecie(dto.especie());
-        pet.setRaca(dto.raca());
-        pet.setIdade(dto.idade());
-        pet.setPeso(dto.peso());
+        aplicarDados(pet, dto);
 
         Pet petAtualizado = petRepository.save(pet);
         return toResponseDTO(petAtualizado);
@@ -127,6 +99,21 @@ public class PetService {
         petRepository.delete(pet);
     }
 
+    /**
+     * Responsável só enxerga os próprios pets; Veterinário enxerga todos
+     * (pode precisar consultar qualquer pet no atendimento).
+     */
+    private Page<PetResponseDTO> buscarConformePapel(
+            Function<Long, Page<Pet>> consultaDoResponsavel,
+            Supplier<Page<Pet>> consultaGeral
+    ) {
+        UserDetailsImpl usuarioLogado = SecurityUtils.getUsuarioLogado();
+        Page<Pet> pets = usuarioLogado.isResponsavel()
+                ? consultaDoResponsavel.apply(usuarioLogado.getIdResponsavel())
+                : consultaGeral.get();
+        return pets.map(this::toResponseDTO);
+    }
+
     private Pet buscarOuFalhar(Long id) {
         return petRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Pet não encontrado"));
@@ -135,6 +122,14 @@ public class PetService {
     private Responsavel buscarResponsavelOuFalhar(Long idResponsavel) {
         return responsavelRepository.findById(idResponsavel)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Responsável não encontrado"));
+    }
+
+    private void aplicarDados(Pet pet, PetRequestDTO dto) {
+        pet.setNomePet(dto.nomePet());
+        pet.setEspecie(dto.especie());
+        pet.setRaca(dto.raca());
+        pet.setIdade(dto.idade());
+        pet.setPeso(dto.peso());
     }
 
     private PetResponseDTO toResponseDTO(Pet pet) {
