@@ -9,25 +9,24 @@ import br.com.chupinvet.chupinvet.repository.PetRepository;
 import br.com.chupinvet.chupinvet.repository.ResponsavelRepository;
 import br.com.chupinvet.chupinvet.security.SecurityUtils;
 import br.com.chupinvet.chupinvet.security.UserDetailsImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class PetService {
 
-    @Autowired
-    private PetRepository petRepository;
 
-    @Autowired
-    private ResponsavelRepository responsavelRepository;
+    private final PetRepository petRepository;
+
+    private final ResponsavelRepository responsavelRepository;
 
     @Transactional
     public PetResponseDTO cadastrar(PetRequestDTO dto) {
-        // O dono do pet é sempre o Responsável autenticado — nunca um
-        // valor vindo do corpo da requisição.
+        // O dono do pet é sempre o Responsável autenticado nunca um valor vindo do corpo da requisição.
         Long idResponsavelLogado = SecurityUtils.getUsuarioLogado().getIdResponsavel();
         Responsavel responsavel = buscarResponsavelOuFalhar(idResponsavelLogado);
 
