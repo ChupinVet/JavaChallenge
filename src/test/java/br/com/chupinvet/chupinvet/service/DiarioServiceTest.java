@@ -5,7 +5,6 @@ import br.com.chupinvet.chupinvet.dto.DiarioResponseDTO;
 import br.com.chupinvet.chupinvet.model.Diario;
 import br.com.chupinvet.chupinvet.repository.DiarioRepository;
 import br.com.chupinvet.chupinvet.repository.PetRepository;
-import br.com.chupinvet.chupinvet.service.insight.InsightProvider;
 import br.com.chupinvet.chupinvet.support.DadosDeTeste;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,9 +36,6 @@ class DiarioServiceTest {
     @Mock
     private PetRepository petRepository;
 
-    @Mock
-    private InsightProvider insightProvider;
-
     @InjectMocks
     private DiarioService diarioService;
 
@@ -61,7 +57,6 @@ class DiarioServiceTest {
     void cadastrar_QuandoResponsavelEDono_DeveSalvar() {
         DadosDeTeste.logarComoResponsavel(10L);
         when(petRepository.findById(1L)).thenReturn(Optional.of(DadosDeTeste.pet(1L, DadosDeTeste.responsavel(10L))));
-        when(diarioRepository.findTopByPet_IdPetOrderByDataRegistroDesc(1L)).thenReturn(Optional.empty());
         when(diarioRepository.save(any(Diario.class))).thenAnswer(invocacao -> invocacao.getArgument(0));
 
         DiarioResponseDTO resultado = diarioService.cadastrar(dto);

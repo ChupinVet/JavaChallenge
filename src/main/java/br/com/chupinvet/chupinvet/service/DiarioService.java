@@ -8,7 +8,6 @@ import br.com.chupinvet.chupinvet.model.Pet;
 import br.com.chupinvet.chupinvet.repository.DiarioRepository;
 import br.com.chupinvet.chupinvet.repository.PetRepository;
 import br.com.chupinvet.chupinvet.security.SecurityUtils;
-import br.com.chupinvet.chupinvet.service.insight.InsightProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,22 +22,15 @@ public class DiarioService {
 
     private final PetRepository petRepository;
 
-    private final InsightProvider insightProvider;
-
     @Transactional
     public DiarioResponseDTO cadastrar(DiarioRequestDTO dto) {
         Pet pet = buscarPetOuFalhar(dto.idPet());
         // Só o Responsável dono do pet pode registrar um diário para ele.
         SecurityUtils.validarPosseResponsavel(pet.getResponsavel().getIdResponsavel());
 
-        Diario diarioAnterior = diarioRepository
-                .findTopByPet_IdPetOrderByDataRegistroDesc(pet.getIdPet())
-                .orElse(null);
-
         Diario diario = new Diario();
         diario.setPet(pet);
         aplicarDados(diario, dto);
-        diario.setInsightIA(insightProvider.gerarInsight(diario, diarioAnterior));
 
         Diario diarioSalvo = diarioRepository.save(diario);
         return toResponseDTO(diarioSalvo);
@@ -62,8 +54,8 @@ public class DiarioService {
     @Transactional
     public DiarioResponseDTO atualizar(Long id, DiarioRequestDTO dto) {
         Diario diario = buscarOuFalhar(id);
-        // O pet de um registro de diário não muda numa atualização (dto.idPet()
-        // é ignorado aqui de propósito) e o insight não é reprocessado.
+        // O pet de um registro de diário não muda numa atualização
+        // (dto.idPet() é ignorado aqui de propósito).
         SecurityUtils.validarPosseResponsavel(diario.getPet().getResponsavel().getIdResponsavel());
 
         aplicarDados(diario, dto);
@@ -111,7 +103,6 @@ public class DiarioService {
                 diario.getSintomas(),
                 diario.getObservacoes(),
                 diario.getPesoRegistrado(),
-                diario.getInsightIA(),
                 diario.getPet().getIdPet(),
                 diario.getPet().getNomePet()
         );
