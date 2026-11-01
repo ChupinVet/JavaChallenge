@@ -5,6 +5,7 @@ import br.com.chupinvet.chupinvet.repository.ResponsavelRepository;
 import br.com.chupinvet.chupinvet.repository.UsuarioRepository;
 import br.com.chupinvet.chupinvet.repository.VeterinarioRepository;
 import br.com.chupinvet.chupinvet.security.UserDetailsImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,16 +14,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private ResponsavelRepository responsavelRepository;
+    private final ResponsavelRepository responsavelRepository;
 
-    @Autowired
-    private VeterinarioRepository veterinarioRepository;
+    private final VeterinarioRepository veterinarioRepository;
 
     @Override
     @Transactional(readOnly = true)
