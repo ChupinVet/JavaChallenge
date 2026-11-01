@@ -29,11 +29,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
 
-    @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
+    private final AuthEntryPointJwt unauthorizedHandler;
 
     @Bean
     public AuthTokenFilter authTokenFilter(JwtUtils jwtUtils) {

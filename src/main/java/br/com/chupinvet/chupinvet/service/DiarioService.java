@@ -10,6 +10,7 @@ import br.com.chupinvet.chupinvet.repository.PetRepository;
 import br.com.chupinvet.chupinvet.security.SecurityUtils;
 import br.com.chupinvet.chupinvet.security.UserDetailsImpl;
 import br.com.chupinvet.chupinvet.service.insight.InsightProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,16 +18,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class DiarioService {
 
-    @Autowired
-    private DiarioRepository diarioRepository;
+    private final DiarioRepository diarioRepository;
 
-    @Autowired
-    private PetRepository petRepository;
+    private final PetRepository petRepository;
 
-    @Autowired
-    private InsightProvider insightProvider;
+    private final InsightProvider insightProvider;
 
     @Transactional
     public DiarioResponseDTO cadastrar(DiarioRequestDTO dto) {

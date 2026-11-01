@@ -9,6 +9,7 @@ import br.com.chupinvet.chupinvet.model.Veterinario;
 import br.com.chupinvet.chupinvet.repository.UsuarioRepository;
 import br.com.chupinvet.chupinvet.repository.VeterinarioRepository;
 import br.com.chupinvet.chupinvet.security.SecurityUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,16 +18,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class VeterinarioService {
+    
+    private final VeterinarioRepository veterinarioRepository;
 
-    @Autowired
-    private VeterinarioRepository veterinarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public VeterinarioResponseDTO cadastrar(VeterinarioRequestDTO dto) {

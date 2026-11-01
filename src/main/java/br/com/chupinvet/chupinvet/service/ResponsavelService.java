@@ -10,6 +10,7 @@ import br.com.chupinvet.chupinvet.repository.ResponsavelRepository;
 import br.com.chupinvet.chupinvet.repository.UsuarioRepository;
 import br.com.chupinvet.chupinvet.security.SecurityUtils;
 import br.com.chupinvet.chupinvet.security.UserDetailsImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,16 +20,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@RequiredArgsConstructor
 public class ResponsavelService {
 
-    @Autowired
-    private ResponsavelRepository responsavelRepository;
+    private final ResponsavelRepository responsavelRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public ResponsavelResponseDTO cadastrar(ResponsavelRequestDTO dto) {
