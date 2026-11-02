@@ -176,8 +176,8 @@ A coleção **`Documentos/Testes_insomnia.yaml`** (Insomnia) cobre cadastro, log
 | Disciplina | Responsável | Evidência |
 |---|---|---|
 | Java Advanced | Vitor | Este repositório e a aplicação online |
-| DevOps Tools & Cloud Computing | Vitor | https://github.com/ChupinVet/DevOpsChallenge: a API containerizada, com MySQL em nuvem e CI/CD no Azure DevOps · [PLACEHOLDER do link do video] |
-| Advanced Business Development with .NET | Samantha | https://github.com/ChupinVet/ChupinVetAgenda: horários e agendamento de consultas |
+| DevOps Tools & Cloud Computing | Vitor | https://github.com/ChupinVet/DevOpsChallenge: a API containerizada, com MySQL em nuvem e CI/CD no Azure DevOps · vídeo: [PLACEHOLDER] | 
+|Advanced Business Development with .NET | Samantha | https://github.com/ChupinVet/ChupinVetAgenda: horários e agendamento de consultas |
 | Disruptive Architectures: IoT, IoB & Generative AI | Samantha | https://github.com/ChupinVet/ChupIA: assistente que responde sobre os dados do pet e do diário, sem fazer diagnósticos |
 | Mastering Relational and Non-Relational Database | Ana Claudia | Modelo Oracle em 3FN (o schema usado por esta API), packages, trigger de auditoria, exportação em JSON e MongoDB · vídeo: https://youtu.be/2jp1tLnUr90 |
 | Compliance, Quality Assurance & Tests | Ana Claudia | Testes via Postman: https://youtu.be/03_GnB1PsMU |
