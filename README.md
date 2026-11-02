@@ -1,392 +1,311 @@
 # ChupinVet API
 
-A API ChupinVet atua como camada de comunicação entre o aplicativo mobile do projeto 
-(React Native + Expo) e o banco de dados Oracle, permitindo que todas as informações 
-cadastradas no sistema sejam acessadas, atualizadas e gerenciadas de forma segura.
+API REST do **ChupinVet**, a solução do grupo para o **Challenge CLYVO VET 2026 (FIAP)**. Ela guarda o histórico contínuo de saúde do pet e conecta o **responsável** (tutor) ao **veterinário**, com autenticação JWT e regras de acesso por papel e por posse.
 
-Através da API, o aplicativo mobile realiza operações de cadastro, 
-consulta, atualização e remoção de dados relacionados a **pets**, **responsáveis**, **veterinários** e **registros de diário**, 
-com autenticação via **JWT** e permissões diferentes para cada tipo de usuário.
+| | |
+|---|---|
+| **Aplicação online** | https://javachallenge.onrender.com |
+| **Swagger** | https://javachallenge.onrender.com/swagger-ui/index.html |
+| **Vídeo de apresentação** | Placeholder |
+| **Disciplina** | Java Advanced (FIAP, 2TDS) |
 
-A API centraliza as regras de negócio da aplicação validações, 
-autenticação, autorização por papel e por posse (um responsável só acessa os próprios dados) 
-garantindo que essas regras sejam aplicadas de forma padronizada, 
-independente de qual cliente está consumindo a API.
+> O Render (plano gratuito) desliga a aplicação depois de 15 minutos sem uso. A primeira requisição depois disso pode levar alguns segundos enquanto ela volta.
 
 ---
 
-# Integrantes
-
-| Nome | RM | Turma |
-|---|---|---|
-| Agatha Yie Won Yun | RM561507 | 2TDSA |
-| Ana Claudia Fernandes Martins | RM561190 | 2TDSR |
-| Samantha Faruolo Galdi | RM554794 | 2TDSA |
-| Vitor Fria Dalmagro | RM566052 | 2TDSA |
-
----
-
-# Tecnologias Utilizadas
-
-- Java 25
-- Spring Boot 4.0.6 (Spring Framework 7 / Spring Security 7)
-- Spring Data JPA + Hibernate ORM
-- Spring Security + JWT (io.jsonwebtoken / jjwt 0.13)
-- Oracle Database (driver ojdbc11)
-- Maven
-- Springdoc OpenAPI (Swagger UI, com suporte a Bearer Token)
-- Lombok
-- Bean Validation (Jakarta Validation)
-- BCrypt (hash de senhas)
+## Sumário
+1. [O desafio e a nossa proposta](#1-o-desafio-e-a-nossa-proposta)
+2. [Integrantes e divisão do trabalho](#2-integrantes-e-divisão-do-trabalho)
+3. [Arquitetura da solução](#3-arquitetura-da-solução)
+4. [Decisões técnicas](#4-decisões-técnicas)
+5. [Segurança: papéis e posse](#5-segurança-papéis-e-posse)
+6. [Fluxos funcionais completos](#6-fluxos-funcionais-completos)
+7. [Testes automatizados](#7-testes-automatizados)
+8. [Integração com as demais disciplinas](#8-integração-com-as-demais-disciplinas)
+9. [Como executar](#9-como-executar)
+10. [Endpoints](#10-endpoints)
+11. [Estrutura do projeto](#11-estrutura-do-projeto)
 
 ---
 
-# Frontend
+## 1. O desafio e a nossa proposta
 
-A camada de visualização é um aplicativo **mobile em React Native + Expo**, desenvolvido em repositório separado, que consome esta API via REST, usando o mesmo fluxo de autenticação JWT documentado abaixo.
+### O problema (briefing CLYVO VET)
+O mercado pet tem alto potencial de recorrência, mas o responsável só procura a clínica em urgências ou em gatilhos óbvios, como a vacinação. O resultado é **baixa recorrência** (consultas e exames preventivos esquecidos), **menor LTV** (acompanhamentos e retornos perdidos) e **vínculo fraco**, porque **não existe um histórico longitudinal estruturado entre clínica e tutor**.
 
-O app cobre as duas experiências de usuário da plataforma:
-- **Responsável**: cadastro, login, gerenciamento dos próprios pets e registros de diário.
-- **Veterinário**: cadastro, login, consulta de pets e responsáveis cadastrados.
+A CLYVO VET pede uma solução digital que acompanhe a **jornada contínua de saúde do pet**, com quatro objetivos: **organizar** eventos clínicos, **lembrar** cuidados, **personalizar** a comunicação e **gerar dados** estruturados para as clínicas parceiras.
 
-A demonstração das telas e do funcionamento do app está no vídeo de entrega, junto com a demonstração da API.
+### A proposta do ChupinVet
+O ChupinVet coloca o **dia a dia do pet** no centro do cuidado. O responsável registra num **diário** como o pet está (humor, alimentação, água, comportamento, sintomas e peso), e o veterinário passa a enxergar esse histórico entre uma consulta e outra. O cuidado deixa de existir só na emergência e vira um acompanhamento contínuo.
 
----
-# Arquitetura do Projeto
-
-## Explicando cada camada
-
-### Controller
-Endpoints REST da aplicação. Também é onde ficam as anotações `@PreAuthorize`, 
-que restringem cada rota por papel (`ROLE_RESPONSAVEL` / `ROLE_VETERINARIO`).
-
-### Service
-Regras de negócio, incluindo as checagens de **posse** (exemplo: um responsável só edita/deleta os próprios pets), 
-feitas via `SecurityUtils`.
-
-### Repository
-Comunicação com o banco via Spring Data JPA (Query Methods).
-
-### DTO
-Transferência de dados entre cliente e servidor, 
-separa o que é aceito na entrada (`*RequestDTO`) do que é exposto na saída (`*ResponseDTO`).
-
-### Model
-Entidades JPA mapeadas para o schema Oracle.
-
-### Exception
-Tratamento centralizado de erros (`GlobalExceptionHandler`), 
-convertendo exceções em respostas HTTP (400, 401, 403, 404, 409, 500).
-
-### Security
-Toda a infraestrutura de autenticação/autorização: geração e validação de JWT, 
-filtro de autenticação por requisição, e a configuração de quais rotas são públicas ou protegidas.
-
-### Config
-Configurações gerais da aplicação (exemplo: integração do Swagger com autenticação Bearer).
+### Como esta API atende ao briefing
+| Pilar do briefing | Onde é atendido |
+|---|---|
+| Gerar dados (histórico longitudinal) | **API Java:** diário do pet em ordem cronológica |
+| Bem-estar (nutrição, comportamento) | **API Java:** campos do diário |
+| Vínculo clínica ↔ tutor | **API Java:** o veterinário consulta pets e diários de qualquer tutor; o tutor só vê os seus |
+| Organizar eventos clínicos | **API .NET (ChupinVetAgenda):** horários dos veterinários e agendamento de consultas |
+| Personalização com IA | **ChupIA:** resume e compara os registros do diário e aponta mudanças no histórico |
 
 ---
 
-# Estrutura do Projeto
+## 2. Integrantes e divisão do trabalho
 
-```txt
-src/main/java/br/com/chupinvet/chupinvet
-│
-├── config           => Configurações gerais (Swagger/OpenAPI com Bearer Auth)
-├── controller       => Endpoints REST
-├── dto              => Objetos de transferência de dados
-├── exception        => Exceções customizadas e handler global
-├── model            => Entidades JPA
-├── repository       => Interfaces Spring Data JPA
-└── service
-    └── insight      => Ponto de extensão para geração de insights (IA, parte do plano de melhoria)
+| Nome | RM | Turma | Responsabilidade no projeto |
+|---|---|---|---|
+| Agatha Yie Won Yun | RM561507 | 2TDSA | App mobile (Mobile Application Development) |
+| Ana Claudia Fernandes Martins | RM561190 | 2TDSR | Banco de dados (Mastering Relational and Non-Relational Database) e qualidade (Compliance, Quality Assurance & Tests) |
+| Samantha Faruolo Galdi | RM554794 | 2TDSA | API .NET (Advanced Business Development with .NET) e IA (Disruptive Architectures: IoT, IoB & Generative AI) |
+| Vitor Fria Dalmagro | RM566052 | 2TDSA | API Java (Java Advanced) e nuvem/CI-CD (DevOps Tools & Cloud Computing) |
+
+---
+
+## 3. Arquitetura da solução
+
+```mermaid
+flowchart LR
+    T([Tutor]) --> APP
+    V([Veterinário]) --> APP
+    APP["App mobile<br/>React Native + Expo"] -- "REST + JWT" --> JAVA["API Java<br/>Spring Boot · Render"]
+    APP --> NET["API .NET<br/>ChupinVetAgenda"]
+    APP --> IA["ChupIA<br/>assistente de IA"]
+    JAVA --> DB[("Oracle<br/>schema compartilhado")]
+    NET --> DB
+    IA -. "lê pets e diário" .-> DB
 ```
 
----
+- **App mobile:** a interface usada pelo responsável e pelo veterinário. Consome esta API via REST, usando o mesmo fluxo de autenticação JWT descrito na seção 5.
+- **API Java (este repositório):** identidade, papéis, pets e diário. Concentra as regras de negócio e de acesso.
+- **API .NET (ChupinVetAgenda):** horários dos veterinários e agendamento de consultas, no mesmo banco.
+- **ChupIA:** assistente de IA que responde, em linguagem natural, perguntas sobre os dados do pet e do diário.
+- **Banco Oracle:** um único schema compartilhado entre as duas APIs.
 
-# Banco de Dados
-
-O projeto utiliza **Oracle Database**. O schema é compartilhado com uma API .NET do mesmo projeto 
-(responsável por Consulta, Histórico de Consulta e Prontuário), por isso o Hibernate está configurado com 
-`ddl-auto=validate`: a aplicação **nunca** altera o schema sozinha, apenas confere se as entidades batem com as tabelas reais.
-
-## Principais entidades
-
-- **Usuario** — identidade base (nome, e-mail, senha, CPF, telefone, etc.)
-- **Responsavel** — dados específicos de quem é responsável por pets
-- **Veterinario** — dados específicos de profissionais veterinários
-- **Pet** — animais cadastrados, vinculados a um responsável
-- **Diario** — registros diários de saúde/comportamento de um pet, feitos pelo responsável
-
-## Relacionamentos
-
-- `Responsavel` e `Veterinario` **não** herdam de `Usuario`, 
-cada um tem sua própria chave primária e se associa a um `Usuario` por uma relação `@OneToOne` (composição), refletindo o modelo físico do banco.
-- Um `Responsavel` possui vários `Pet` (1:N).
-- Um `Pet` possui vários `Diario` (1:N).
-- Um `Usuario` é um `Responsavel` **ou** um `Veterinario`, o papel é derivado dinamicamente (não existe uma coluna "tipo" no banco), verificando em qual tabela existe um registro associado.
+### Camadas da API Java
+| Camada | Responsabilidade |
+|---|---|
+| `controller` | Endpoints REST e restrição por papel (`@PreAuthorize`) |
+| `service` | Regras de negócio e checagem de posse |
+| `repository` | Acesso ao banco via Spring Data JPA |
+| `dto` | O que entra (`*RequestDTO`) e o que sai (`*ResponseDTO`) da API |
+| `model` | Entidades JPA mapeadas para o schema Oracle |
+| `security` | JWT, filtro de autenticação, regras de rota e utilitários de posse |
+| `exception` | Tradução centralizada de erros para respostas HTTP |
+| `config` | Swagger com autenticação Bearer |
 
 ---
 
-# Autenticação e Autorização
+## 4. Decisões técnicas
 
-A API usa **JWT** (Bearer Token). 
-Não existe endpoint de "signup" separado, cadastrar um Responsável ou Veterinário (`POST /responsaveis` ou `POST /veterinarios`) 
-já cria a conta de login.
+- **Papel derivado no login:** não existe uma coluna "tipo". O papel vem da tabela onde o usuário existe (responsável ou veterinário), e `Responsavel`/`Veterinario` se ligam ao `Usuario` por composição (`@OneToOne`), como no modelo físico do banco.
+- **Dono vem do token:** o dono de um pet ou diário nunca é informado pelo cliente, e sim tirado do JWT. Isso impede criar recursos em nome de outra pessoa.
+- **`ddl-auto=validate`, sem Flyway:** o schema é compartilhado com a API .NET e mantido por script. A aplicação nunca altera o banco.
+- **Código sem repetição:** injeção por construtor; um `UsuarioService` com as regras de identidade (e-mail e CPF únicos, senha com BCrypt) compartilhado pelos dois tipos de cadastro; e o `SecurityUtils` como ponto único das regras de posse.
+- **Logs detalhados só em `dev`:** em produção, os logs de SQL exporiam dados como CPF.
 
-## Fluxo básico
+### Tecnologias
+- Java 25 e Spring Boot 4.0.6 (Spring Security 7)
+- Spring Data JPA / Hibernate 7 e Oracle (ojdbc11)
+- JWT (jjwt 0.13), BCrypt e Bean Validation
+- Lombok e springdoc-openapi (Swagger)
+- JUnit 5, Mockito, MockMvc e H2 (testes)
+- Maven
 
-1. `POST /responsaveis` **ou** `POST /veterinarios`, cadastro (rota pública)
-2. `POST /auth/login`  envia e-mail e senha, recebe um token JWT
-3. Envia o token em todas as demais requisições: header `Authorization: Bearer <tokenJwt>`
+---
 
-## Papéis e permissões
+## 5. Segurança: papéis e posse
+
+A API usa **JWT (Bearer token)**. Não existe um endpoint separado de "signup": cadastrar um responsável (`POST /responsaveis`) ou um veterinário (`POST /veterinarios`) já cria a conta de login.
 
 | Papel | Pode fazer |
 |---|---|
-| `ROLE_RESPONSAVEL` | CRUD dos próprios pets e diários; CRUD do próprio cadastro |
-| `ROLE_VETERINARIO` | Listar todos os pets e responsáveis (leitura), CRUD do próprio cadastro de veterinário |
+| `ROLE_RESPONSAVEL` | CRUD dos próprios pets e diários e do próprio cadastro |
+| `ROLE_VETERINARIO` | Consultar pets, diários e responsáveis de qualquer tutor; CRUD do próprio cadastro |
 
-Além da checagem por papel, existe checagem de **posse**: 
-um Responsável não consegue ver, editar ou deletar pets, 
-diários ou o cadastro de **outro** Responsável, 
-mesmo tendo um token válido, tentativas assim retornam `403`.
+Além do papel, existe a checagem de **posse**: um responsável não vê, não edita e não apaga pets, diários ou o cadastro de **outro** responsável, mesmo com um token válido. Essas tentativas retornam `403`.
 
-## Rotas públicas (não exigem token)
+**Rotas públicas:** `POST /responsaveis`, `POST /veterinarios`, `POST /auth/login` e o Swagger. Todas as outras exigem token.
 
-- `POST /responsaveis`
-- `POST /veterinarios`
-- `POST /auth/login`
-- `/swagger-ui.html`
-
-Todas as demais rotas exigem token válido.
+| Código | Quando acontece |
+|---|---|
+| `400` | Dados inválidos. O corpo indica o campo e o motivo |
+| `401` | Sem token, token inválido ou login incorreto |
+| `403` | O papel não permite, ou o recurso pertence a outro responsável |
+| `404` | O recurso não existe |
+| `409` | E-mail ou CPF já cadastrado |
 
 ---
 
-# Fluxos Funcionais Completos (além de CRUD)
+## 6. Fluxos funcionais completos
 
-Requisito da sprint: pelo menos dois fluxos completos do sistema, além de simples operações de CRUD.
+### Fluxo 1: autenticação e identidade (cadastro → login → JWT → papel)
+1. `POST /responsaveis` ou `POST /veterinarios` cria o `Usuario` e o registro do papel numa única transação. A senha é gravada com hash BCrypt, e e-mail e CPF duplicados retornam `409`.
+2. `POST /auth/login` valida a senha e devolve o token JWT, junto com o papel e os ids do usuário.
+3. A cada requisição, o filtro JWT carrega o usuário e descobre o papel pela tabela onde ele existe.
+4. Esse papel libera ou bloqueia as rotas (`@PreAuthorize`).
 
-### 1. Autenticação e emissão de identidade (signup → login → JWT → papel)
-
-Não é uma operação isolada de CRUD, envolve múltiplas etapas e componentes trabalhando juntos:
-1. Cadastro (`POST /responsaveis` ou `POST /veterinarios`) cria o `Usuario` e o registro específico (Responsável ou Veterinário) numa única transação.
-2. Login (`POST /auth/login`) valida a senha (hash BCrypt) e emite um token JWT.
-3. O papel do usuário (`ROLE_RESPONSAVEL`/`ROLE_VETERINARIO`) é **derivado dinamicamente** em tempo de execução, não existe uma coluna "tipo" no banco, o sistema verifica em qual tabela (Responsável ou Veterinário) existe um registro associado ao `Usuario` que fez login.
-4. Esse papel é então usado por todo o resto da aplicação para liberar ou bloquear rotas (`@PreAuthorize`).
-
-### 2. Controle de acesso por posse (autorização que atravessa todos os recursos)
-
-Não é uma tela ou endpoint único, é uma regra de negócio (`SecurityUtils`) aplicada a Pets, Diários e ao próprio cadastro:
-1. Um Responsável autenticado só consegue ver, editar ou remover **os próprios** pets, diários e dados de cadastro, mesmo com um token JWT válido, tentar acessar o recurso de outro Responsável retorna `403`.
-2. O dono de um novo Pet/Diário nunca é informado pelo cliente, é sempre derivado do token de quem está autenticado, impedindo que alguém crie um recurso "em nome" de outro usuário.
-3. Já o Veterinário tem visão mais ampla (lê pets e responsáveis de qualquer um), refletindo o papel dele na operação da clínica.
----
-
-# Funcionalidades Implementadas
-
-- CRUD completo de Pets, Responsáveis, Veterinários e Diário
-- Autenticação via JWT (login) + autorização por papel (`@PreAuthorize`)
-- Autorização por posse (um usuário só gerencia os próprios dados)
-- Senhas armazenadas com hash (BCrypt), nunca em texto puro
-- Paginação e ordenação de resultados
-- Busca por parâmetros (nome, espécie, raça, especialidade, tipo de serviço)
-- Bean Validation, com retorno `400` detalhando o campo inválido
-- Tratamento de exceções centralizado (`400`, `401`, `403`, `404`, `409`, `500`)
-- Documentação via Swagger/OpenAPI, com suporte a autenticação Bearer direto na interface
-- Relacionamentos JPA mapeados via composição (`@OneToOne`/`@ManyToOne`/`@OneToMany`)
-- Ponto de extensão (`InsightProvider`) preparado para integração futura com uma API de IA externa, 
-que vai gerar insights automáticos nos registros de diário
+### Fluxo 2: acompanhamento contínuo do pet, com controle de posse
+1. O responsável cadastra o pet. O dono é sempre quem está logado.
+2. O responsável registra o diário do pet (humor, alimentação, água, comportamento, sintomas, peso). Só o dono do pet pode registrar.
+3. O histórico fica disponível em ordem cronológica (`GET /diarios/pet/{idPet}`).
+4. O veterinário consulta os pets e os históricos de qualquer responsável para acompanhar o paciente entre as consultas. Um responsável que tenta ver o pet de outro recebe `403`.
 
 ---
 
-# Como Executar o Projeto
+## 7. Testes automatizados
 
-## 1. Clonar o repositório
+São **26 testes**, que rodam com:
+```bash
+./mvnw clean test
+```
+Eles usam o perfil `test` (`src/test/resources/application-test.properties`), com um **banco H2 em memória** criado e apagado a cada execução. **Não precisam do Oracle nem de credenciais**, e a chave JWT dos testes é gerada aleatoriamente.
 
+| Tipo | Classes | O que garante |
+|---|---|---|
+| **Unitário de service** (JUnit + Mockito) | `UsuarioServiceTest`, `PetServiceTest`, `DiarioServiceTest`, `ResponsavelServiceTest` | Duplicidade de e-mail/CPF, recurso não encontrado, posse negada, dono do pet vindo do token, veterinário lendo pets de qualquer responsável |
+| **Controller** (`@WebMvcTest`) | `PetControllerTest` | Status HTTP, JSON de resposta e validação (`400`) |
+| **Integração** (`@SpringBootTest` + MockMvc) | `AutenticacaoEPosseIntegrationTest` | Os dois fluxos de ponta a ponta com a segurança real: cadastro → login → pet; `401` sem token; `409` em cadastro repetido; `403` ao acessar pet de outro; veterinário lê mas não cadastra pet |
+| **Contexto** | `ChupinvetApplicationTests` | A aplicação sobe com todas as configurações |
+
+### Testes manuais
+A coleção **`Documentos/Testes_insomnia.yaml`** (Insomnia) cobre cadastro, login, CRUD e os casos de erro (`400`, `401`, `403`, `404`, `409`). As pastas devem ser executadas em ordem (01 a 07), porque os tokens e ids são preenchidos automaticamente entre as requisições.
+
+---
+
+## 8. Integração com as demais disciplinas
+
+| Disciplina | Responsável | Evidência |
+|---|---|---|
+| Java Advanced | Vitor | Este repositório e a aplicação online |
+| DevOps Tools & Cloud Computing | Vitor | https://github.com/ChupinVet/DevOpsChallenge: a API containerizada, com MySQL em nuvem e CI/CD no Azure DevOps · vídeo: [PLACEHOLDER] | 
+|Advanced Business Development with .NET | Samantha | https://github.com/ChupinVet/ChupinVetAgenda: horários e agendamento de consultas |
+| Disruptive Architectures: IoT, IoB & Generative AI | Samantha | https://github.com/ChupinVet/ChupIA: assistente que responde sobre os dados do pet e do diário, sem fazer diagnósticos |
+| Mastering Relational and Non-Relational Database | Ana Claudia | Modelo Oracle em 3FN (o schema usado por esta API), packages, trigger de auditoria, exportação em JSON e MongoDB · vídeo: https://youtu.be/2jp1tLnUr90 |
+| Compliance, Quality Assurance & Tests | Ana Claudia | Testes via Postman: https://youtu.be/03_GnB1PsMU |
+| Mobile Application Development | Agatha | App React Native + Expo, demonstrado no vídeo. O repositório é privado (acesso só do professor de Mobile e do grupo) |
+
+---
+
+## 9. Como executar
+
+### Pré-requisitos
+- Java 25
+- Acesso ao Oracle da FIAP (usuário e senha)
+
+### 1. Clonar
 ```bash
 git clone https://github.com/ChupinVet/JavaChallenge.git
 cd JavaChallenge
 ```
 
-## 2. Configurar variáveis de ambiente
-
-O projeto se conecta ao Oracle compartilhado da FIAP. 
-**Usuário e senha não têm valor padrão no código** 
-(o repositório é público), são obrigatórios via variável de ambiente:
+### 2. Variáveis de ambiente
+Usuário e senha do banco **não têm valor padrão no código**, porque o repositório é público.
 
 | Variável | Obrigatória? | Descrição |
 |---|---|---|
-| `DB_USER` | Sim | Usuário do Oracle (ex.: `seuusuario`) |
+| `DB_USER` | Sim | Usuário do Oracle |
 | `DB_PASSWORD` | Sim | Senha do Oracle |
 | `DB_URL` | Não | Padrão: `jdbc:oracle:thin:@oracle.fiap.com.br:1521:orcl` |
-| `JWT_SECRET` | Não em dev (tem valor padrão só para desenvolvimento) / **Sim em produção** | Chave de assinatura do JWT, 32+ caracteres |
-| `JWT_EXPIRATION_MS` | Não | Tempo de expiração do token em milissegundos (padrão: 3600000 = 1h) |
+| `JWT_SECRET` | Só em produção | Chave de assinatura do JWT, com 32 caracteres ou mais. Em `dev` existe um valor padrão |
+| `JWT_EXPIRATION_MS` | Não | Validade do token em ms (padrão: 3600000 = 1 h) |
+| `SPRING_PROFILES_ACTIVE` | Não | `dev` (padrão) ou `prod` |
 
-Exemplo (Linux/macOS):
 ```bash
 export DB_USER=seuusuario
 export DB_PASSWORD=suasenha
 ```
 
-No Windows (PowerShell):
-```powershell
-$env:DB_USER="seuusuario"
-$env:DB_PASSWORD="suasenha"
-```
-
-Ou configure essas variáveis direto no Run Configuration da sua IDE (Eclipse, IntelliJ).
-
-## 3. Executar o projeto
-
+### 3. Rodar
 ```bash
 ./mvnw spring-boot:run
 ```
+A aplicação sobe em `http://localhost:8080`, com o Swagger em `http://localhost:8080/swagger-ui/index.html`.
 
-ou:
+### 4. Testar pelo Swagger
+1. Cadastre um usuário (`POST /responsaveis` ou `POST /veterinarios`).
+2. Faça login (`POST /auth/login`) e copie o `token`.
+3. Clique em **Authorize** e cole o token **sem** o prefixo `Bearer`.
 
-```bash
-mvn spring-boot:run
-```
-
-Por padrão, a aplicação sobe com o profile `dev` (`application-dev.properties`). 
-Para produção, o profile `prod` é ativado automaticamente pela variável `SPRING_PROFILES_ACTIVE=prod` 
-(configurada no Render).
-
----
-
-# Acesso à Aplicação
-
-## URL base (produção)
-
-```txt
-https://javachallenge.onrender.com
-```
-
-## URL base (local)
-
-```txt
-http://localhost:8080
-```
-
-> O Render (plano gratuito) "dorme" após 15 minutos sem uso, 
-a primeira requisição depois disso pode demorar alguns segundos para responder enquanto o serviço acorda.
+### Produção (Render)
+Perfil `prod` (`SPRING_PROFILES_ACTIVE=prod`), com `DB_URL`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET` e `JWT_EXPIRATION_MS` configurados como variáveis de ambiente no Render.
 
 ---
 
-# Swagger
+## 10. Endpoints
 
-Depois de iniciar a aplicação, acesse:
-
-```txt
-http://localhost:8080/swagger-ui/index.html
-```
-ou, em produção:
-```txt
-https://javachallenge.onrender.com/swagger-ui/index.html
-```
-
-## Testando endpoints protegidos pelo Swagger
-
-1. Cadastre um usuário via `POST /responsaveis` ou `POST /veterinarios`
-2. Faça login via `POST /auth/login` e copie o valor de `token` da resposta
-3. Clique no botão **Authorize** (cadeado, no topo da página) e 
-cole o token (sem o prefixo `Bearer`, o Swagger adiciona sozinho)
-4. Os endpoints protegidos passam a funcionar normalmente
-
----
-
-# Endpoints da API
-
-## Autenticação
-
+### Autenticação
 | Método | Endpoint | Descrição | Acesso |
 |---|---|---|---|
-| POST | `/auth/login` | Login (retorna token JWT) | Público |
+| POST | `/auth/login` | Login (retorna o token JWT) | Público |
 
-## Responsáveis
-
+### Responsáveis
 | Método | Endpoint | Descrição | Acesso |
 |---|---|---|---|
-| POST | `/responsaveis` | Cadastra um novo responsável (signup) | Público |
-| GET | `/responsaveis` | Lista todos os responsáveis | Veterinário |
-| GET | `/responsaveis/{id}` | Busca responsável por ID | Veterinário, ou o próprio responsável |
-| GET | `/responsaveis?page=0&size=10&sort=nomeUsuario,asc` | Busca com paginação/ordenação | Veterinário |
-| PUT | `/responsaveis/{id}` | Atualiza um responsável | O próprio responsável |
-| DELETE | `/responsaveis/{id}` | Remove um responsável | O próprio responsável |
+| POST | `/responsaveis` | Cadastra um responsável (signup) | Público |
+| GET | `/responsaveis` | Lista responsáveis (paginado) | Veterinário |
+| GET | `/responsaveis/{id}` | Busca por ID | Veterinário, ou o próprio responsável |
+| PUT | `/responsaveis/{id}` | Atualiza | O próprio responsável |
+| DELETE | `/responsaveis/{id}` | Remove | O próprio responsável |
 
-## Veterinários
-
+### Veterinários
 | Método | Endpoint | Descrição | Acesso |
 |---|---|---|---|
-| POST | `/veterinarios` | Cadastra um novo veterinário (signup) | Público |
-| GET | `/veterinarios` | Lista todos os veterinários | Autenticado |
-| GET | `/veterinarios/{id}` | Busca veterinário por ID | Autenticado |
-| GET | `/veterinarios?page=0&size=10&sort=nomeUsuario,asc` | Busca com paginação/ordenação | Autenticado |
-| GET | `/veterinarios/especialidade?especialidade=Cirurgia` | Busca por especialidade | Autenticado |
+| POST | `/veterinarios` | Cadastra um veterinário (signup) | Público |
+| GET | `/veterinarios` | Lista veterinários (paginado) | Autenticado |
+| GET | `/veterinarios/{id}` | Busca por ID | Autenticado |
+| GET | `/veterinarios/especialidade?especialidade=Cardiologia` | Busca por especialidade | Autenticado |
 | GET | `/veterinarios/servico?tipoServico=Consulta` | Busca por tipo de serviço | Autenticado |
-| PUT | `/veterinarios/{id}` | Atualiza um veterinário | O próprio veterinário |
-| DELETE | `/veterinarios/{id}` | Remove um veterinário | O próprio veterinário |
+| PUT | `/veterinarios/{id}` | Atualiza | O próprio veterinário |
+| DELETE | `/veterinarios/{id}` | Remove | O próprio veterinário |
 
-## Pets
-
+### Pets
 | Método | Endpoint | Descrição | Acesso |
 |---|---|---|---|
-| POST | `/pets` | Cadastra um novo pet (dono = responsável autenticado) | Responsável |
-| GET | `/pets` | Lista pets (responsável vê só os seus; veterinário vê todos) | Autenticado |
-| GET | `/pets/{id}` | Busca pet por ID | Autenticado (com checagem de posse) |
-| GET | `/pets?page=0&size=10&sort=nomePet,asc` | Busca com paginação/ordenação | Autenticado |
-| GET | `/pets/nome?nomePet=Thor` | Busca pets por nome | Autenticado |
-| GET | `/pets/especie?especie=Cachorro` | Busca pets por espécie | Autenticado |
-| GET | `/pets/raca?raca=Pug` | Busca pets por raça | Autenticado |
-| PUT | `/pets/{id}` | Atualiza um pet | O responsável dono do pet |
-| DELETE | `/pets/{id}` | Remove um pet | O responsável dono do pet |
+| POST | `/pets` | Cadastra um pet (o dono é o responsável logado) | Responsável |
+| GET | `/pets` | Lista pets (o responsável vê os seus; o veterinário vê todos) | Autenticado |
+| GET | `/pets/{id}` | Busca por ID | Autenticado, com checagem de posse |
+| GET | `/pets/nome?nomePet=Thor` | Busca por nome | Autenticado |
+| GET | `/pets/especie?especie=Cachorro` | Busca por espécie | Autenticado |
+| GET | `/pets/raca?raca=Pug` | Busca por raça | Autenticado |
+| PUT | `/pets/{id}` | Atualiza | O responsável dono do pet |
+| DELETE | `/pets/{id}` | Remove (junto com o diário do pet) | O responsável dono do pet |
 
-## Diário
-
+### Diário
 | Método | Endpoint | Descrição | Acesso |
 |---|---|---|---|
-| POST | `/diarios` | Cria um registro de diário para um pet | Responsável dono do pet |
-| GET | `/diarios/pet/{idPet}` | Lista o histórico de diário de um pet (mais recente primeiro) | Autenticado (com checagem de posse) |
-| GET | `/diarios/{id}` | Busca um registro específico | Autenticado (com checagem de posse) |
-| PUT | `/diarios/{id}` | Atualiza um registro | O responsável dono do pet |
-| DELETE | `/diarios/{id}` | Remove um registro | O responsável dono do pet |
+| POST | `/diarios` | Registra um diário para um pet | O responsável dono do pet |
+| GET | `/diarios/pet/{idPet}` | Histórico do pet (mais recente primeiro, paginado) | Autenticado, com checagem de posse |
+| GET | `/diarios/{id}` | Busca um registro | Autenticado, com checagem de posse |
+| PUT | `/diarios/{id}` | Atualiza | O responsável dono do pet |
+| DELETE | `/diarios/{id}` | Remove | O responsável dono do pet |
+
+As listagens aceitam paginação e ordenação, por exemplo `?page=0&size=10&sort=nomePet,asc`.
 
 ---
 
-# Exemplos de Busca
+## 11. Estrutura do projeto
 
 ```txt
-GET /pets/nome?nomePet=Thor
-GET /veterinarios/especialidade?especialidade=Cardiologia
-GET /diarios/pet/1?page=0&size=5
+src/main/java/br/com/chupinvet/chupinvet
+├── config        => Swagger/OpenAPI com autenticação Bearer
+├── controller    => Endpoints REST
+├── dto           => Entrada e saída da API (records)
+├── exception     => Exceções da aplicação e handler global
+├── model         => Entidades JPA
+├── repository    => Interfaces Spring Data JPA
+├── security      => JWT, filtro, regras de rota e SecurityUtils
+└── service       => Regras de negócio
+
+src/test/java/br/com/chupinvet/chupinvet
+├── controller    => Testes da camada web (@WebMvcTest)
+├── integration   => Testes de ponta a ponta (@SpringBootTest)
+├── service       => Testes unitários (Mockito)
+└── support       => Dados de teste reaproveitados
+
+Documentos/Testes_insomnia.yaml => Coleção de testes manuais (Insomnia)
 ```
 
 ---
-
-# Testando a API
-
-Uma coleção Postman (compatível com Insomnia) com todos os fluxos cadastro,
-login, CRUD completo e os casos de erro (`400`, `401`, `403`, `404`, `409`) 
-está disponível em `chupinvet.postman_collection.json`, na raiz do repositório.
-
----
-
-# Próximos Passos
-
-- **Flyway**: fora de escopo nesta sprint, por decisão do professor. O schema é criado e mantido manualmente (`Estrutura_e_Carga.sql`), compartilhado com a API .NET do projeto.
-- **Insight de IA no Diário**: o campo `insightIA` existe no modelo, mas não é preenchido nesta sprint, será gerado por uma API de IA externa, a ser integrada futuramente.
-
----
-
-# Documentação da API
-
-A documentação completa e interativa está disponível via Swagger UI.
-
----
-
 # Disciplina
-
-Java Advanced 
+Java Advanced
 
 FIAP
