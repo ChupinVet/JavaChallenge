@@ -323,7 +323,5 @@ Documentos/Testes_insomnia.yaml => Coleção de testes manuais (Insomnia)
 ```
 
 ---
-# Disciplina
-Java Advanced
 
-FIAP
+Java Advanced · FIAP
