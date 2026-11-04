@@ -6,7 +6,7 @@ API REST do **ChupinVet**, a solução do grupo para o **Challenge CLYVO VET 202
 |---|---|
 | **Aplicação online** | https://javachallenge.onrender.com |
 | **Swagger** | https://javachallenge.onrender.com/swagger-ui/index.html |
-| **Vídeo de apresentação** | Placeholder |
+| **Vídeo de apresentação** | https://youtu.be/bcYMRjzJafw |
 | **Disciplina** | Java Advanced (FIAP, 2TDS) |
 
 > O Render (plano gratuito) desliga a aplicação depois de 15 minutos sem uso. A primeira requisição depois disso pode levar alguns segundos enquanto ela volta.
@@ -18,6 +18,7 @@ API REST do **ChupinVet**, a solução do grupo para o **Challenge CLYVO VET 202
 2. [Integrantes e divisão do trabalho](#2-integrantes-e-divisão-do-trabalho)
 3. [Arquitetura da solução](#3-arquitetura-da-solução)
 4. [Decisões técnicas](#4-decisões-técnicas)
+    - [O que mudou da Sprint 3 para a Sprint 4](#o-que-mudou-da-sprint-3-para-a-sprint-4)
 5. [Segurança: papéis e posse](#5-segurança-papéis-e-posse)
 6. [Fluxos funcionais completos](#6-fluxos-funcionais-completos)
 7. [Testes automatizados](#7-testes-automatizados)
@@ -45,7 +46,7 @@ O ChupinVet coloca o **dia a dia do pet** no centro do cuidado. O responsável r
 | Bem-estar (nutrição, comportamento) | **API Java:** campos do diário |
 | Vínculo clínica ↔ tutor | **API Java:** o veterinário consulta pets e diários de qualquer tutor; o tutor só vê os seus |
 | Organizar eventos clínicos | **API .NET (ChupinVetAgenda):** horários dos veterinários e agendamento de consultas |
-| Personalização com IA | **ChupIA:** resume e compara os registros do diário e aponta mudanças no histórico |
+| Personalização com IA | **ChupIA:** lê o pet e o diário **por esta API**, resume e compara os registros e aponta mudanças no histórico |
 
 ---
 
@@ -68,16 +69,16 @@ flowchart LR
     V([Veterinário]) --> APP
     APP["App mobile<br/>React Native + Expo"] -- "REST + JWT" --> JAVA["API Java<br/>Spring Boot · Render"]
     APP --> NET["API .NET<br/>ChupinVetAgenda"]
-    APP --> IA["ChupIA<br/>assistente de IA"]
     JAVA --> DB[("Oracle<br/>schema compartilhado")]
     NET --> DB
-    IA -. "lê pets e diário" .-> DB
+    T --> IA["ChupIA<br/>assistente de IA (Python + Gemini)"]
+    IA -- "REST + JWT<br/>consulta pets e diário" --> JAVA
 ```
 
 - **App mobile:** a interface usada pelo responsável e pelo veterinário. Consome esta API via REST, usando o mesmo fluxo de autenticação JWT descrito na seção 5.
 - **API Java (este repositório):** identidade, papéis, pets e diário. Concentra as regras de negócio e de acesso.
 - **API .NET (ChupinVetAgenda):** horários dos veterinários e agendamento de consultas, no mesmo banco.
-- **ChupIA:** assistente de IA que responde, em linguagem natural, perguntas sobre os dados do pet e do diário.
+- **ChupIA:** assistente de IA (Python + Google Gemini) que responde, em linguagem natural, perguntas sobre o pet e o diário. Ele **consome esta API**: faz login (`POST /auth/login`) e lê os dados por `GET /pets/{id}` e `GET /diarios/pet/{idPet}`, sem acessar o banco diretamente.
 - **Banco Oracle:** um único schema compartilhado entre as duas APIs.
 
 ### Camadas da API Java
@@ -101,6 +102,23 @@ flowchart LR
 - **`ddl-auto=validate`, sem Flyway:** o schema é compartilhado com a API .NET e mantido por script. A aplicação nunca altera o banco.
 - **Código sem repetição:** injeção por construtor; um `UsuarioService` com as regras de identidade (e-mail e CPF únicos, senha com BCrypt) compartilhado pelos dois tipos de cadastro; e o `SecurityUtils` como ponto único das regras de posse.
 - **Logs detalhados só em `dev`:** em produção, os logs de SQL exporiam dados como CPF.
+
+### O que mudou da Sprint 3 para a Sprint 4
+Cada mudança entrou por uma branch própria e um pull request, com a descrição do que mudou e de como foi testado.
+
+| Antes (Sprint 3) | Agora (Sprint 4) | Por quê |
+|---|---|---|
+| `@Autowired` em campo em 12 classes | Injeção por construtor (`final` + `@RequiredArgsConstructor`) | As dependências são obrigatórias e imutáveis, e os services podem ser testados sem subir o Spring |
+| Validação de e-mail/CPF únicos e preenchimento do `Usuario` copiados em dois services | `UsuarioService` + interface `DadosUsuario` | Uma regra só para os dois tipos de cadastro |
+| Regra de leitura por posse repetida em 4 lugares; 4 buscas de pet com o mesmo `if` | `SecurityUtils.validarAcessoLeitura` e `PetService.buscarConformePapel` | Cada regra num ponto só |
+| Preenchimento das entidades repetido no cadastrar e no atualizar | `aplicarDados(entidade, dto)` em cada service | Sem duplicação |
+| Logs de SQL ligados também em produção | Logs detalhados só no perfil `dev`; erro 500 registrado no log | Não expor dados sensíveis e facilitar o diagnóstico |
+| 1 teste (`contextLoads`), que só passava com o Oracle | 26 testes: unidade, camada web e integração, com H2 | Qualidade verificável sem depender do banco |
+| Ponto de extensão de IA (`InsightProvider`) sem uso | Removido; a IA está no ChupIA | Sem código morto |
+| Swagger como "OpenAPI definition v0" | Título, descrição e versão da API no Swagger | Apresentação da documentação |
+| README com referências a arquivos inexistentes | README com o desafio, as decisões e a integração com as disciplinas | Organização da entrega |
+
+Nenhuma dessas mudanças alterou rotas, JSON ou códigos de resposta: o app mobile e o ChupIA, que também consome esta API, continuaram funcionando sem ajustes.
 
 ### Tecnologias
 - Java 25 e Spring Boot 4.0.6 (Spring Security 7)
@@ -176,12 +194,12 @@ A coleção **`Documentos/Testes_insomnia.yaml`** (Insomnia) cobre cadastro, log
 | Disciplina | Responsável | Evidência |
 |---|---|---|
 | Java Advanced | Vitor | Este repositório e a aplicação online |
-| DevOps Tools & Cloud Computing | Vitor | https://github.com/ChupinVet/DevOpsChallenge: a API containerizada, com MySQL em nuvem e CI/CD no Azure DevOps · vídeo: [PLACEHOLDER] | 
-|Advanced Business Development with .NET | Samantha | https://github.com/ChupinVet/ChupinVetAgenda: horários e agendamento de consultas |
-| Disruptive Architectures: IoT, IoB & Generative AI | Samantha | https://github.com/ChupinVet/ChupIA: assistente que responde sobre os dados do pet e do diário, sem fazer diagnósticos |
+| DevOps Tools & Cloud Computing | Vitor | https://github.com/ChupinVet/DevOpsChallenge: a mesma API na Azure (Web App), com MySQL em nuvem e CI/CD no Azure DevOps · vídeo: https://youtu.be/J82EBMD0xTc |
+| Advanced Business Development with .NET | Samantha | https://github.com/ChupinVet/ChupinVetAgenda: horários e agendamento de consultas |
+| Disruptive Architectures: IoT, IoB & Generative AI | Samantha | https://github.com/ChupinVet/ChupIA: assistente com Gemini que consome esta API (`/auth/login`, `/pets/{id}`, `/diarios/pet/{idPet}`) para responder sobre o pet e o diário, sem fazer diagnósticos |
 | Mastering Relational and Non-Relational Database | Ana Claudia | Modelo Oracle em 3FN (o schema usado por esta API), packages, trigger de auditoria, exportação em JSON e MongoDB · vídeo: https://youtu.be/2jp1tLnUr90 |
-| Compliance, Quality Assurance & Tests | Ana Claudia | Testes via Postman: https://youtu.be/03_GnB1PsMU |
-| Mobile Application Development | Agatha | App React Native + Expo, demonstrado no vídeo. O repositório é privado (acesso só do professor de Mobile e do grupo) |
+| Compliance, Quality Assurance & Tests | Ana Claudia | Testes da API via Postman · vídeo: https://youtu.be/03_GnB1PsMU |
+| Mobile Application Development | Agatha | App React Native + Expo. O repositório é privado (acesso só do professor de Mobile e do grupo) · vídeo: https://youtu.be/7N1EaOTSpcQ |
 
 ---
 
